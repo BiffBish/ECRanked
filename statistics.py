@@ -1,4 +1,4 @@
-SKIMSPATH = "C:\Users\Admin\Desktop\Skims"
+SKIMSPATH = "C:/Users/Admin/Desktop/Skims"
 
 
 data = dict()
