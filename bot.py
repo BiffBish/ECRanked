@@ -791,7 +791,6 @@ class Leaderboard(ButtonCog):
 
 
 
-
 async def EloRecaculation(DisplayProgress = False):
     channel = await bot.fetch_channel(LOG_CHANNEL_ID)
 

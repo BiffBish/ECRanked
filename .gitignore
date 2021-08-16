@@ -3,4 +3,5 @@
 venv/*
 ECRankedAPI/**
 ECRankedAPI
+Skims/**
 stats.png
