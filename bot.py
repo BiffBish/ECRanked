@@ -482,6 +482,30 @@ async def _link(ctx, user, name):
     await ctx.send("Oculus for \""+name+"\" Linked")
     pass
 
+@bot.slash.slash(
+    name="reboot",
+    description="Reboot and pull from discord",
+    default_permission=False,
+    permissions={
+            779349159852769310: [
+            create_permission(301343234108424192, SlashCommandPermissionType.USER, True)
+            ]
+        },
+    options=[
+        create_option(
+            name="amount",
+            description="The amount of messages to purge",
+            option_type=4,
+            required=False
+        ) 
+    ],
+    guild_ids = [779349159852769310]
+    )
+async def UpdateReboot_(ctx):
+    subprocess.Popen(['update.bat'])
+    print("QUITING")
+    quit()
+
 @tasks.loop(seconds=86400)
 async def ActiveGamesReminder():
     return
@@ -1028,9 +1052,6 @@ def make_ordinal(n):
         suffix = 'th'
     return str(n) + suffix
 
-# subprocess.Popen(['update.bat'])
-# print("QUITING")
-# quit()
 
 bot.add_buttons(Challenge(bot))
 bot.add_buttons(Leaderboard(bot))

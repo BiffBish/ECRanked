@@ -1,3 +1,4 @@
-TIMEOUT 10
-echo "Playing"
-TIMEOUT 10
+TIMEOUT 5
+git fetch
+git pull
+bot.py
