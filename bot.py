@@ -127,7 +127,7 @@ class Bot(commands.Bot):
         await testingChannel.send("Starting")
         #await EloRecaculation()
         await MainLeaderboard(self)
-        statistics.LoadMapsIntoMemory(testingChannel)
+        await statistics.LoadMapsIntoMemory(testingChannel)
         await StartupTask(self)
     
     async def on_command_error(self, ctx, error):
