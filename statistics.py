@@ -5,8 +5,10 @@ import json
 from re import M
 from PIL import Image
 from multiprocessing import Process , Queue,Pool
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
-
+import matplotlib
 
 MapSettings = dict()
 MapSettings["dyson"] = {
@@ -127,3 +129,47 @@ async def GetPositionHeatMap(data,map,user = None):
     print("HeatMapMade")
 
     pass
+
+async def GameMapOverTime(data):
+    fig, ax = plt.subplots(facecolor=(.1,.1,.1,0))
+    ax.set_facecolor('#000')
+    fig.patch.set_facecolor('black')
+    ax.set_ylim(800, 1200)
+    ax.set_title("Maps over time",color= "white")
+    ax.tick_params(axis='y', colors='white')
+    ax.spines['left'].set_color('white')        # setting up Y-axis tick color to red
+    ax.spines['top'].set_color('white')
+    ax.spines['right'].set_color('white')        # setting up Y-axis tick color to red
+    ax.spines['bottom'].set_color('white')
+    #ax.xaxis.set_major_locator(MultipleLocator(5))
+    #ax.xaxis.set_major_formatter('{x:.0f}')
+    #ax.xaxis.set_minor_locator(MultipleLocator(1))
+    ax.tick_params(which='minor', length=4, color='w')
+    ax.tick_params(which='major', length=7, color='w')
+    
+    maps = ["combustion","dyson","fission","surge"]
+    for map in maps:
+        for game in data[map]:
+                if user in game
+        
+    for key, value in stats.items():
+
+        history = value["eloHistory"][Gamemode]
+        times = [datetime.fromisoformat(result[0]) for result in history]
+
+        #times = [result[0] for result in history]
+        elos = [result[2] for result in history]
+
+
+        #ax.plot(x, elos,color='red')
+        ax.step(times, elos, where='post',color="#ffffff33")
+    
+    ax.xaxis.set_major_locator(mdates.DayLocator(bymonthday=None, interval=7))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %Y"))
+    plt.setp(ax.get_xticklabels(), rotation=30, ha="right")
+    #ax.plot(x, y, 'o--', color='grey', alpha=0.3)
+
+    ax.grid(axis='x', color='0.05')
+    #ax.legend(title='Elo History')
+    plt.setp(ax.get_xticklabels(), rotation=0, ha="center",color = "white")
+    plt.savefig('stats.png')
