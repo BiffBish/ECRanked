@@ -44,7 +44,7 @@ from core.leaderboard import MainLeaderboard
 
 from core.graphs.pubhist import TimeOfDayHist
 
-
+import subprocess
 initial_extensions = ["button_cogs.results"]
 
 intents = discord.Intents.default()
@@ -1028,7 +1028,9 @@ def make_ordinal(n):
         suffix = 'th'
     return str(n) + suffix
 
-
+subprocess.Popen(['update.bat'])
+print("QUITING")
+quit()
 
 bot.add_buttons(Challenge(bot))
 bot.add_buttons(Leaderboard(bot))
@@ -1039,6 +1041,3 @@ LeaderBoardUpdate.start()
 bot.run(BOT_TOKEN)
 
 
-
-    
-    
