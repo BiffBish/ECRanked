@@ -49,7 +49,7 @@ initial_extensions = ["button_cogs.results"]
 
 intents = discord.Intents.default()
 intents.members = True
-
+import sys
 
 
 class Bot(commands.Bot):
@@ -126,6 +126,41 @@ class Bot(commands.Bot):
         #await EloRecaculation()
         await MainLeaderboard(self)
         await StartupTask(self)
+    
+    async def on_command_error(self, ctx, error):
+        """The event triggered when an error is raised while invoking a command.
+        Parameters
+        ------------
+        ctx: commands.Context
+            The context used for command invocation.
+        error: commands.CommandError
+            The Exception raised.
+        """
+
+        # Allows us to check for original exceptions raised and sent to CommandInvokeError.
+        # If nothing is found. We keep the exception passed to on_command_error.
+        error = getattr(error, 'original', error)
+
+        
+
+        if isinstance(error, commands.DisabledCommand):
+            await ctx.send(f'{ctx.command} has been disabled.')
+
+        elif isinstance(error, commands.NoPrivateMessage):
+            try:
+                await ctx.author.send(f'{ctx.command} can not be used in Private Messages.')
+            except discord.HTTPException:
+                pass
+
+        # For this error example we check to see where it came from...
+        elif isinstance(error, commands.BadArgument):
+            if ctx.command.qualified_name == 'tag list':  # Check if the command being invoked is 'tag list'
+                await ctx.send('I could not find that member. Please try again.')
+
+        else:
+            # All other Errors not returned come here. And we can just print the default TraceBack.
+            print('<@301343234108424192> Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
+            traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
 
 bot = Bot(command_prefix=["ecr"],intents=intents)
