@@ -409,6 +409,7 @@ async def _stats(ctx, gamemode = 0):
     guild_ids=GUILD_IDS,
 )
 async def _stats(ctx, gamemode = 0):
+    ctx.send(content = "updated")
     test = 1/0
     if gamemode < 4:
         await GlobalStats(gamemode = gamemode )
