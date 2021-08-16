@@ -291,6 +291,7 @@ async def _elo(ctx, user=None, gamemode = 0):
     f = discord.File("stats.png", filename="image.png")
     e = discord.Embed()
     embed.set_image(url="attachment://image.png")
+    await ctx.send(content = "yiff")
     await ctx.send(file=f,embed=embed)
 
 @bot.slash.slash(
