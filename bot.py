@@ -50,7 +50,7 @@ initial_extensions = ["button_cogs.results"]
 intents = discord.Intents.default()
 intents.members = True
 import sys
-
+import statistics
 
 class Bot(commands.Bot):
     """Custom Bot subclass."""
@@ -123,8 +123,11 @@ class Bot(commands.Bot):
     async def on_start(self):
         print("Started")
         self.guild = await self.fetch_guild(779349159852769310)
+        testingChannel = await self.fetch_channel(873299154045136957)
+        await testingChannel.send("Starting")
         #await EloRecaculation()
         await MainLeaderboard(self)
+        statistics.LoadMapsIntoMemory(testingChannel)
         await StartupTask(self)
     
     async def on_command_error(self, ctx, error):
@@ -539,6 +542,7 @@ async def _link(ctx, user, name):
     guild_ids = [779349159852769310]
     )
 async def UpdateReboot_(ctx):
+    await ctx.send(content="Rebooting and updating!")
     subprocess.Popen(['update.bat'])
     print("QUITING")
     quit()
