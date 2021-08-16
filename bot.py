@@ -1028,9 +1028,9 @@ def make_ordinal(n):
         suffix = 'th'
     return str(n) + suffix
 
-subprocess.Popen(['update.bat'])
-print("QUITING")
-quit()
+# subprocess.Popen(['update.bat'])
+# print("QUITING")
+# quit()
 
 bot.add_buttons(Challenge(bot))
 bot.add_buttons(Leaderboard(bot))
