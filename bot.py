@@ -378,7 +378,7 @@ async def _stats(ctx, gamemode = 0):
     description="See stastistics about pub games",
     options=[
         create_option(
-            name="stat",
+            name="gamemode",
             description="The game mode you want to see stats about",
             option_type=4,
             required=True,
