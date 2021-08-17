@@ -16,6 +16,7 @@ if __name__ == '__main__':
 
 
     from data.config import BOT_TOKEN
+    from data.config import SKIMSFILEPATH
 
 
     from core.buttoncogs import ButtonCog
@@ -32,7 +33,7 @@ if __name__ == '__main__':
     from core.challenges.twovtwo import Challenge2v2
 
     # Importing the newly installed library.
-    from core.constants import GUILD_IDS , ACTIVE_GAMES_CHANNEL , GAME_CHANNEL_ID , LEADERBOARD_CHANNEL_ID , GAMEMODENAMES , LOG_CHANNEL_ID, SKIMSFILEPATH
+    from core.constants import GUILD_IDS , ACTIVE_GAMES_CHANNEL , GAME_CHANNEL_ID , LEADERBOARD_CHANNEL_ID , GAMEMODENAMES , LOG_CHANNEL_ID
     from core.button import button
     from core.buttoncogs import ButtonCog
 
@@ -348,7 +349,8 @@ if __name__ == '__main__':
         guild_ids=GUILD_IDS,
     )
     async def _stats(ctx, user):
-        await statistics.GetPositionHeatMap(bot.mapData,"dyson",user)
+        await statistics.GameMapOverTime(bot.mapData)
+        #await statistics.GetPositionHeatMap(bot.mapData,"dyson",user)
         # if gamemode < 4:
         #     await GlobalStats(gamemode = gamemode )
         # else:

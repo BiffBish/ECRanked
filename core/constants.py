@@ -14,4 +14,3 @@ GUILD_IDS = [779349159852769310]
 
 GAMEMODENAMES = ["Comet 1v1","Linked Loadout 1v1","Standard 1v1","Standard 2v2"]
 
-SKIMSFILEPATH = "D:/ECRanked/Skims"
