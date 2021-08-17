@@ -8,13 +8,6 @@ stats.png
 *.pyc
 core/__pycache__
 core/__pycache__/**
-core/__pycache__/button.cpython-39.pyc
-
-*.pyc
-core/__pycache__/database.cpython-39.pyc
-core/__pycache__/button.cpython-39.pyc
 
 data
 data/**
-*.pyc
-data/config.py
