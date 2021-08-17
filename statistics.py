@@ -73,6 +73,9 @@ async def LoadMapsIntoMemory(logChannel):
         for Obj in ReturnObj:
             if Obj is not None:
                 data[Obj["map"]].append(Obj["data"])
+    
+    for key,value in data.items():
+        print(f"{key} : {len(value)}")
 
 
 

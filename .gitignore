@@ -16,3 +16,5 @@ core/__pycache__/button.cpython-39.pyc
 
 data
 data/**
+*.pyc
+data/config.py
