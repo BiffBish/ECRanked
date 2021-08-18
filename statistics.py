@@ -1,5 +1,8 @@
 #SKIMSPATH = "C:/Users/Admin/Desktop/Skims"
 #SKIMSPATH = "Skims"
+
+colors = [(222,146,89),(58,203,214),(233,108,168),(140,251,136)]
+colorsNormalized = [(222/255,146/255,89/255),(58/255,203/255,214/255),(233/255,108/255,168/255),(140/255,251/255,136/255)]
 if __name__ == '__main__':
     import asyncio
     import statistics
@@ -270,7 +273,8 @@ async def GameMapOverTime(data):
     ax4 = fig.add_subplot(gs[-1, -1])
 
     #labels = ['Co', 'Dy', 'Fi', 'Su']
-    patches, texts, autotexts = ax4.pie(totalTimes, autopct='%1.1f%%',startangle=90)
+
+    patches, texts, autotexts = ax4.pie(totalTimes, autopct='%1.1f%%',startangle=90,colors=colorsNormalized)
     for _ in autotexts:
         _.set_fontsize(6)
         _.set_color("#fcfdfe")
@@ -298,7 +302,7 @@ async def GameMapOverTime(data):
     # Clean the background noise, if color != white, then set to black.
 
     #quit()
-    colors = [(214,39,39),(44,160,44),(255,127,14),(31,119,180)]
+    #colors = [(214,39,39),(44,160,44),(255,127,14),(31,119,180)]
     for y in range(img.size[1]):
         for x in range(img.size[0]):
             pix = pixdata[x,y]
