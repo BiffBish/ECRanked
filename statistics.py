@@ -22,6 +22,7 @@ from matplotlib.dates import date2num
 
 import matplotlib
 from matplotlib.gridspec import GridSpec
+from matplotlib.ticker import (MultipleLocator, AutoMinorLocator)
 
 from datetime import datetime , date ,timedelta
 from data.config import SKIMSFILEPATH
@@ -190,39 +191,40 @@ async def GameMapOverTime(data):
     for key,value in times.items():
         times[key] = [datetime.strptime(time, '%Y-%m-%d %H-%M-%S') for time in value]
     ax1 = fig.add_subplot(gs[0:-1, 0:-1])
-    ax1.tick_params(axis='y', colors='#ff00ff')
-    ax1.tick_params(axis='x', colors='#ff00ff')
+    #ax1.tick_params(axis='y', colors='#ff00ff')
+    #ax1.tick_params(axis='x', colors='#ff00ff')
 
-    ax1.spines['left'].set_color('#ff00ff')        # setting up Y-axis tick color to red
-    ax1.spines['top'].set_color('#ff00ff')
-    ax1.spines['right'].set_color('#ff00ff')        # setting up Y-axis tick color to red
-    ax1.spines['bottom'].set_color('#ff00ff')
+    #ax1.spines['left'].set_color('#ff00ff')        # setting up Y-axis tick color to red
+    #ax1.spines['top'].set_color('#ff00ff')
+    #ax1.spines['right'].set_color('#ff00ff')        # setting up Y-axis tick color to red
+    #ax1.spines['bottom'].set_color('#ff00ff')
     #ax.xaxis.set_major_locator(MultipleLocator(5))
     #ax.xaxis.set_major_formatter('{x:.0f}')
     #ax.xaxis.set_minor_locator(MultipleLocator(1))
-    ax1.tick_params(which='minor', length=4,colors='#ff00ff')
-    ax1.tick_params(which='major', length=7,colors='#ff00ff')     
+    ax1.tick_params(which='minor', length=4)
+    ax1.tick_params(which='major', length=7)     
         
     ax1.plot(times["combustion"], cumulative["combustion"],color= "#F00",label = "combustion")
     ax1.plot(times["dyson"], cumulative["dyson"],color= "#0F0",label = "dyson")
     ax1.plot(times["fission"], cumulative["fission"],color= "#FF0",label = "fission")
     ax1.plot(times["surge"], cumulative["surge"],color= "#00F",label = "surge")
-    ax1.legend(labelcolor = '#ff00ff',facecolor = "w")
+    ax1.legend(facecolor = "w")
     ax1.xaxis.set_major_locator(mdates.DayLocator(bymonthday=None, interval=2))
     ax1.xaxis.set_minor_locator(mdates.DayLocator(bymonthday=None, interval=1))
     ax1.xaxis.set_major_formatter(mdates.DateFormatter("%b %d"))
     ax1.set_xlim(startDate,endDate)
+    ax1.grid(which='both', axis='x',color='gray', linestyle='-', linewidth=.5)
     #ax1.figure.set_size_inches(8, 6)
 
     ax2 = fig.add_subplot(gs[-1, 0:-1])
 
-    ax2.tick_params(axis='y', colors='#ff00ff')
-    ax2.tick_params(axis='x', colors='#ff00ff')
+    #ax2.tick_params(axis='y', colors='#ff00ff')
+    #ax2.tick_params(axis='x', colors='#ff00ff')
 
-    ax2.spines['left'].set_color('#ff00ff')        # setting up Y-axis tick color to red
-    ax2.spines['top'].set_color('#ff00ff')
-    ax2.spines['right'].set_color('#ff00ff')        # setting up Y-axis tick color to red
-    ax2.spines['bottom'].set_color('#ff00ff')
+    #ax2.spines['left'].set_color('#ff00ff')        # setting up Y-axis tick color to red
+    #ax2.spines['top'].set_color('#ff00ff')
+    #ax2.spines['right'].set_color('#ff00ff')        # setting up Y-axis tick color to red
+    #ax2.spines['bottom'].set_color('#ff00ff')
 
 
     
@@ -235,11 +237,12 @@ async def GameMapOverTime(data):
     numweek = date2num(week)
 
     combinedTimes = [times["combustion"],times["dyson"],times["fission"],times["surge"]]
-    ax2.hist([times["combustion"],times["dyson"],times["fission"],times["surge"]], numweek, stacked=True,ec="k",color = ['#f00','#0f0','#ff0','#00f'])
+    ax2.hist([times["combustion"],times["dyson"],times["fission"],times["surge"]], numweek, stacked=True,ec="w",color = ['#f00','#0f0','#ff0','#00f'])
     # ax2.hist([times["combustion"],times["dyson"],times["fission"],times["surge"]], numweek, stacked=True, density=True,ec="k")
     ax2.set_xlim(startDate,endDate)
     ax2.xaxis.set_major_locator(mdates.DayLocator(bymonthday=None, interval=2))
     ax2.xaxis.set_minor_locator(mdates.DayLocator(bymonthday=None, interval=1))
+    ax2.yaxis.set_minor_locator(MultipleLocator(10))
     ax2.xaxis.set_major_formatter(mdates.DateFormatter("%b %d"))
     #plt.show()
 
@@ -254,13 +257,13 @@ async def GameMapOverTime(data):
     
     ax3 = fig.add_subplot(gs[0:-1, -1])
 
-    ax3.tick_params(axis='y', colors='#ff00ff')
-    ax3.tick_params(axis='x', colors='#ff00ff')
+    # ax3.tick_params(axis='y', colors='#ff00ff')
+    # ax3.tick_params(axis='x', colors='#ff00ff')
 
-    ax3.spines['left'].set_color('#ff00ff')        # setting up Y-axis tick color to red
-    ax3.spines['top'].set_color('#ff00ff')
-    ax3.spines['right'].set_color('#ff00ff')        # setting up Y-axis tick color to red
-    ax3.spines['bottom'].set_color('#ff00ff')
+    # ax3.spines['left'].set_color('#ff00ff')        # setting up Y-axis tick color to red
+    # ax3.spines['top'].set_color('#ff00ff')
+    # ax3.spines['right'].set_color('#ff00ff')        # setting up Y-axis tick color to red
+    # ax3.spines['bottom'].set_color('#ff00ff')
 
 
 
@@ -274,25 +277,29 @@ async def GameMapOverTime(data):
 
     #labels = ['Co', 'Dy', 'Fi', 'Su']
 
-    patches, texts, autotexts = ax4.pie(totalTimes, autopct='%1.1f%%',startangle=90,colors=colorsNormalized)
+    patches, texts, autotexts = ax4.pie(totalTimes, 
+        colors = ['#f00','#0f0','#ff0','#00f'],
+        autopct='%1.1f%%',startangle=90,
+        wedgeprops={"edgecolor":"w",'linewidth': 1}
+                        )
     for _ in autotexts:
         _.set_fontsize(6)
-        _.set_color("#fcfdfe")
+        _.set_color("#fff")
     
     ax4.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-    ax4.spines['left'].set_color('#ff00ff')        # setting up Y-axis tick color to red
-    ax4.spines['top'].set_color('#ff00ff')
-    ax4.spines['right'].set_color('#ff00ff')        # setting up Y-axis tick color to red
-    ax4.spines['bottom'].set_color('#ff00ff')
+    # ax4.spines['left'].set_color('#ff00ff')        # setting up Y-axis tick color to red
+    # ax4.spines['top'].set_color('#ff00ff')
+    # ax4.spines['right'].set_color('#ff00ff')        # setting up Y-axis tick color to red
+    # ax4.spines['bottom'].set_color('#ff00ff')
     #plt.show()
 
 
 
-    fig.suptitle("Maps over time",color = "#f0f")
+    fig.suptitle("Maps over time")
 
     plt.savefig('stats.png',dpi=300)
 
-
+    
     print("converting image")
     img = Image.open('stats.png')
     img = img.convert("RGBA")
@@ -308,9 +315,11 @@ async def GameMapOverTime(data):
             pix = pixdata[x,y]
             #If its at Grey White or black Convert to black
             if pix[0] == pix[1] == pix[2]:
-                pixdata[x, y] = (0, 0, 0, 255)
+                brightness = 255 - pix[0]
+                pixdata[x, y] = (brightness, brightness, brightness, 255)
+
             #If the color is Yellow
-            elif pix[0] == pix[1] and pix[0] > pix[2]:
+            if pix[0] == pix[1] and pix[0] > pix[2]:
                brigtness = ((255-pix[2]) / 255)
                newcolor = tuple([round(c*brigtness) for c in colors[2]])
                pixdata[x,y] = newcolor
@@ -349,6 +358,7 @@ async def GameMapOverTime(data):
             #     pixdata[x, y] = (255, 255, 255, 255)
     
     img.save('stats.png')
+    print("finihsed")
     
 
 
