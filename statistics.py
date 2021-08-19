@@ -1,11 +1,5 @@
 #SKIMSPATH = "C:/Users/Admin/Desktop/Skims"
 #SKIMSPATH = "Skims"
-if __name__ == '__main__':
-    import asyncio
-    import statistics
-    print("Started")
-    data = asyncio.run(statistics.LoadMapsIntoMemory(None))
-    asyncio.run(statistics.GameMapOverTime(data))
 
 import os
 import json
@@ -21,9 +15,11 @@ import matplotlib
 from matplotlib.gridspec import GridSpec
 
 from datetime import datetime , date ,timedelta
-from data.config import SKIMSFILEPATH
+#from data.config import SKIMSFILEPATH
 from PIL import Image
 import sys
+import bz2
+import pickle
 
 
 MapSettings = dict()
@@ -346,6 +342,47 @@ async def GameMapOverTime(data):
     
     img.save('stats.png')
     
+def ProcessSpeedOverTime(data):
+    velocitys = dict()
+    frames = data["data"]
+    for frame in frames:
+        for i in range(2):
+            team = frame["teams"][i]
+            for player in team:
+                
+                if str(player["id"]) not in velocitys:
+                    velocitys[str(player["id"])] = list()
+                velocity = player["v"]
+                speed = ((velocity[0]**2) + (velocity[1]**2) + (velocity[2]**2))**.5
+                velocitys[str(player["id"])].append(speed)
 
+    fig, ax = plt.subplots()
+    ax.plot(velocitys["0"])
+    ax.plot(velocitys["1"])
+    ax.plot(velocitys["2"])
+    ax.plot(velocitys["3"])
+    ax.plot(velocitys["4"])
+    #ax.plot(velocitys["5"])
+    #fig.savefig("test.png")
+    plt.show()
+    pass
 
+def DecompressFile(FilePath,OutputFile):
+    print(f"DECOMPRESSING FILE {FilePath}")
+    ReplayData = dict()
+    with bz2.open(FilePath) as f:
+        ReplayData = pickle.load(f)
+    with open(OutputFile,"w") as f:
+        JsonData = json.dumps(ReplayData)
+        f.write(JsonData)
+    return ReplayData
+
+if __name__ == '__main__':
+    import asyncio
+    import statistics
+    print("Started")
+    data = DecompressFile("ECRankedAPI\\Replays\\dyson\\[2021-08-07 15-20-15] EAAF19E2-7D15-4F40-A472-0E4A43B46CAE.rawreplayv3","decompressed.json")
+    ProcessSpeedOverTime(data)
+    #data = asyncio.run(statistics.LoadMapsIntoMemory(None))
+    #asyncio.run(statistics.GameMapOverTime(data))
 
