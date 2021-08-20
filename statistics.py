@@ -3,12 +3,12 @@
 
 colors = [(222,146,89),(58,203,214),(233,108,168),(140,251,136)]
 colorsNormalized = [(222/255,146/255,89/255),(58/255,203/255,214/255),(233/255,108/255,168/255),(140/255,251/255,136/255)]
-if __name__ == '__main__':
-    import asyncio
-    import statistics
-    print("Started")
-    data = asyncio.run(statistics.LoadMapsIntoMemory(None))
-    asyncio.run(statistics.GameMapOverTime(data))
+# if __name__ == '__main__':
+#     import asyncio
+#     import statistics
+#     print("Started")
+#     data = asyncio.run(statistics.LoadMapsIntoMemory(None))
+#     asyncio.run(statistics.GameMapOverTime(data))
 
 import os
 import json
@@ -25,7 +25,9 @@ from matplotlib.gridspec import GridSpec
 from matplotlib.ticker import (MultipleLocator, AutoMinorLocator)
 
 from datetime import datetime , date ,timedelta
+import pickle
 from data.config import SKIMSFILEPATH
+import bz2
 from PIL import Image
 import sys
 
@@ -361,5 +363,68 @@ async def GameMapOverTime(data):
     print("finihsed")
     
 
+def ProcessSpeedOverTime(data):
+    velocitys = dict()
+    upsidedowns = dict()
+    frames = data["data"]
+    for frame in frames:
+        for i in range(2):
+            team = frame["teams"][i]
+            for player in team:
+                
+                if str(player["id"]) not in velocitys:
+                    velocitys[str(player["id"])] = list()
+                    upsidedowns[str(player["id"])] = list()
+                velocity = player["v"]
+                if player["h"][3][1] < 0 : upsidedown = 1
+                else: upsidedown = 0
+                speed = ((velocity[0]**2) + (velocity[1]**2) + (velocity[2]**2))**.5
+                velocitys[str(player["id"])].append(speed)
+                upsidedowns[str(player["id"])].append(upsidedown)
+
+    fig, ax = plt.subplots()
+    nameRef = dict()
+    for userid,player in data["players"].items():
+        nameRef[str(player["playerID"])] = str(player["name"])
+    print("Average Speed:")
+    for id,velocitylist in velocitys.items():
+        print(f"{nameRef[id]} : {round(sum(velocitylist)/len(velocitylist),3)}m/s")
+    print("Percent Upsidedown:")
+    for id,upsidedownslist in upsidedowns.items():
+        print(f"{nameRef[id]} : {round(100*(sum(upsidedownslist)/len(upsidedownslist)),3)}%")
+    ax.plot(upsidedowns["5"])
+    #fig.savefig("test.png")
+#          plt.show()
+    pass
+
+
+def DecompressFile(FilePath,OutputFile):
+    print(f"DECOMPRESSING FILE {FilePath}")
+    ReplayData = dict()
+    with bz2.open(FilePath) as f:
+        ReplayData = pickle.load(f)
+    with open(OutputFile,"w") as f:
+        JsonData = json.dumps(ReplayData)
+        f.write(JsonData)
+    return ReplayData
+
+if __name__ == '__main__':
+    import asyncio
+    import statistics
+    print("Started")
+    #data = DecompressFile("ECRankedAPI\\Replays\\dyson\\[2021-08-07 15-20-15] EAAF19E2-7D15-4F40-A472-0E4A43B46CAE.rawreplayv3","decompressed.json")
+    
+    files = [
+        "Replays\dyson\[2021-08-14 20-37-32] CB66A163-7270-48ED-9CE7-C8E1A78379B9.ecrreplay",
+        "Replays\dyson\[2021-08-14 22-35-00] BB0322DE-BD11-42BD-8510-E429DAB99247.ecrreplay"
+    ]
+    for file in files:
+        data = DecompressFile(file,"decompressed.json")
+        #with open("Skims\dyson\[2021-08-14 22-35-00] BB0322DE-BD11-42BD-8510-E429DAB99247.ecrs") as f:
+        #    data = json.load(f)
+        #    print(data.keys())
+        ProcessSpeedOverTime(data)
+    #data = asyncio.run(statistics.LoadMapsIntoMemory(None))
+    #asyncio.run(statistics.GameMapOverTime(data))
 
 #async def AverageSpeedOverTime()
