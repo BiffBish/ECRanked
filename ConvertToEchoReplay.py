@@ -7,6 +7,8 @@ from types import MappingProxyType
 from datetime import datetime, timedelta
 import zipfile
 
+from multiprocessing import Process , Queue,Pool
+
 
 
 
@@ -30,10 +32,10 @@ def createPlayerInfo(PlayerData,FramePlayerData):
     
 
     player["head"] = {
-        "position":FramePlayerData["r"][0],
-        "forward":FramePlayerData["r"][1],
-        "left":FramePlayerData["r"][2],
-        "up":FramePlayerData["r"][3],
+        "position":FramePlayerData["h"][0],
+        "forward":FramePlayerData["h"][1],
+        "left":FramePlayerData["h"][2],
+        "up":FramePlayerData["h"][3],
     }
     player["body"] = {
         "position":FramePlayerData["b"][0],
@@ -55,7 +57,10 @@ def createPlayerInfo(PlayerData,FramePlayerData):
 REPLAYDIRECTORY = "D:/ECRanked/Replays"
 EXPORTDIRECTORY = "D:/ECRanked/ConvertedReplays"
 #REPLAYDIRECTORY = "Replays"
-#EXPORTDIRECTORY = "Replays"
+
+
+
+
 for map in os.listdir(REPLAYDIRECTORY):
     mapPath = f"{REPLAYDIRECTORY}/{map}"
     for match in os.listdir(mapPath):

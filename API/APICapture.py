@@ -50,9 +50,8 @@ def HandleGame():
         while True:
             try:
                 r = requests.get('http://127.0.0.1:6721/session')
-                jsonData = r.json()
                 if r.status_code == 404:
-                    print(f"Game Finish! {CurrentGame['sessionid']}")     
+                    print(f"Game Finish! {jsonData['sessionid']}")     
 
                     CrashGameID == ""
 
@@ -62,16 +61,16 @@ def HandleGame():
                     if jsonData['map_name'] == "mpl_combat_gauss" : mapSaveLocation = "surge" 
                   
                     break
+                jsonData = r.json()
 
 
                     
 
                 jsonData = r.json()
                 if CrashGameID != "" and CrashGameID != jsonData["sessionid"]:
-                    print(f"Game Crash Finish! {CurrentGame['sessionid']}")     
+                    print(f"Game Crash Finish! {jsonData['sessionid']}")     
 
                     CrashGameID == ""
-                    CurrentGame["players"] = ActivePlayerList
 
                     if jsonData['map_name'] == "mpl_combat_dyson" : mapSaveLocation = "dyson" 
                     if jsonData['map_name'] == "mpl_combat_combustion" : mapSaveLocation = "combustion" 
