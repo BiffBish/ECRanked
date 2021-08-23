@@ -50,17 +50,8 @@ def LoadMapIntoMemory(MapRequest):
         with open(filepath,"rb") as f:
             ReplayData = json.load(f)
         
-        PlayerNameRef = dict()
-        for userID, playerdata in ReplayData["players"].items():
-            PlayerNameRef[str(playerdata["playerID"])] = playerdata["name"]
-        
-        mapData = dict()
-        for id,playerData in ReplayData["Data"].items():
-            mapData[PlayerNameRef[str(id)]] = playerData
-        
-        mapData["start_time"] = ReplayData["start_time"]
 
-        return {"map":MapRequest['map'],"data":mapData}
+        return {"map":MapRequest['map'],"data":ReplayData}
     except:
         print(f"ERROR: {SKIMSFILEPATH}/{MapRequest['map']}/{MapRequest['name']}")
 
@@ -182,7 +173,7 @@ async def GameMapOverTime(data):
         cumulative[map] = list()
         maptimes = list()
         for game in data[map]:
-            mapTime = game["start_time"].replace(":","-")
+            mapTime = game["start_time"]
             maptimes.append(mapTime)
         maptimes.sort()
         times[map] = maptimes
@@ -191,7 +182,7 @@ async def GameMapOverTime(data):
         
     
     for key,value in times.items():
-        times[key] = [datetime.strptime(time, '%Y-%m-%d %H-%M-%S') for time in value]
+        times[key] = [datetime.strptime(time, '%Y/%m/%d %H:%M:%S') for time in value]
     ax1 = fig.add_subplot(gs[0:-1, 0:-1])
     #ax1.tick_params(axis='y', colors='#ff00ff')
     #ax1.tick_params(axis='x', colors='#ff00ff')
