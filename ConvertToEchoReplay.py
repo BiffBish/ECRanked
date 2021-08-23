@@ -5,6 +5,10 @@ import json
 import sys
 from types import MappingProxyType
 from datetime import datetime, timedelta
+import zipfile
+
+
+
 
 def createPlayerInfo(PlayerData,FramePlayerData):
     player = dict()
@@ -48,113 +52,116 @@ def createPlayerInfo(PlayerData,FramePlayerData):
         
     return player
 
-REPLAYDIRECTORY = "Replays"
-for map in os.listdir("Replays"):
+REPLAYDIRECTORY = "D:/ECRanked/Replays"
+EXPORTDIRECTORY = "D:/ECRanked/ConvertedReplays"
+#REPLAYDIRECTORY = "Replays"
+#EXPORTDIRECTORY = "Replays"
+for map in os.listdir(REPLAYDIRECTORY):
     mapPath = f"{REPLAYDIRECTORY}/{map}"
     for match in os.listdir(mapPath):
-        matchPath = f"{REPLAYDIRECTORY}/{map}/{match}"
-        ExportPath = "ExportReplay.echoreplay"
-        print(matchPath)
-        with bz2.open(matchPath) as f:
-            data = pickle.load(f)
+        try:
+            matchPath = f"{REPLAYDIRECTORY}/{map}/{match}"
+            ExportPath = f"{EXPORTDIRECTORY}/{map}/{match.split('.')[0]}.echoreplay"
+            TempExport = "tempExport.txt"
+            print(matchPath)
+            with bz2.open(matchPath) as f:
+                data = pickle.load(f)
+            
+            Data = ""
+            with open(TempExport,"a") as export:
+                start_time = datetime.strptime(data["start_time"],"%Y-%m-%d %H-%M-%S")
+
+                timeBetweenFrame = (1/int(data["framerate"])*1000)
+
+                
+                playerDatas = data["players"]
+                PlayerIDToData = dict()
+                for key,player in playerDatas.items():
+                    temp = dict()
+                    temp["name"] = player["name"]
+                    temp["userid"] = int(key)
+                    temp["playerid"] = player["playerID"]
+                    temp["level"] = player["level"]
+                    temp["number"] = player["number"]
+
+                    temp["ping"] = 0
+                    temp["packetlossratio"] = 0.0
+                    PlayerIDToData[str(player["playerID"])] = temp
+
+
+                framecount = 0 
+                for frame in data["data"]:
+                    FixedAPIRequest = dict()
+                    FixedAPIRequest["sessionid"] = data["sessionid"]
+                    FixedAPIRequest["sessionip"] = "0.0.0.0"
+                    FixedAPIRequest["match_type"] = "Echo_Combat"
+                    if map == "combustion": MapName = "mpl_combat_combustion"
+                    if map == "dyson": MapName = "mpl_combat_dyson"
+                    if map == "fission": MapName = "mpl_combat_fission"
+                    if map == "surge": MapName = "mpl_combat_gauss"
+
+                    FixedAPIRequest["map_name"] = MapName
+                    
+                    FixedAPIRequest["teams"] = []
+                    blueTeam = dict()
+                    blueTeam["team"] = "BLUE TEAM"
+                    blueTeam["players"] = list()    
+                    if len(frame["teams"][0])>0 : blueTeam["players"].append(createPlayerInfo(PlayerIDToData["0"],frame["teams"][0][0]))    
+                    if len(frame["teams"][0])>1 : blueTeam["players"].append(createPlayerInfo(PlayerIDToData["1"],frame["teams"][0][1]))    
+                    if len(frame["teams"][0])>2 : blueTeam["players"].append(createPlayerInfo(PlayerIDToData["2"],frame["teams"][0][2]))    
+                    if len(frame["teams"][0])>3 : blueTeam["players"].append(createPlayerInfo(PlayerIDToData["3"],frame["teams"][0][3]))  
+                    FixedAPIRequest["teams"].append(blueTeam)
+
+                    orangeTeam = dict()
+                    orangeTeam["team"] = "ORANGE TEAM"
+                    orangeTeam["players"] = list()
+                    if len(frame["teams"][1])>0 : orangeTeam["players"].append(createPlayerInfo(PlayerIDToData["4"],frame["teams"][1][0]))    
+                    if len(frame["teams"][1])>1 : orangeTeam["players"].append(createPlayerInfo(PlayerIDToData["5"],frame["teams"][1][1]))    
+                    if len(frame["teams"][1])>2 : orangeTeam["players"].append(createPlayerInfo(PlayerIDToData["7"],frame["teams"][1][2]))  
+                    if len(frame["teams"][1])>3 : orangeTeam["players"].append(createPlayerInfo(PlayerIDToData["6"],frame["teams"][1][3]))    
+                    FixedAPIRequest["teams"].append(orangeTeam)
+
+                    FixedAPIRequest["teams"].append({"team":"SPECTATOR TEAM"})
+                    
+                    
+                    
+                    FixedAPIRequest["player"] = {
+                        "vr_left":[0,0,0],
+                        "vr_position":[0,0,0],
+                        "vr_forward":[0,0,0],
+                        "vr_up":[0,0,0],
+                        }
+                    
+                    FixedAPIRequest["private_match"] =  False
+                    FixedAPIRequest["tournament_match"] =  False
+                    
+                    FixedAPIRequest["pause"] = dict()
+                    FixedAPIRequest["pause"]["paused_state"] =  "none"
+                    FixedAPIRequest["pause"]["unpaused_team"] =  "none"
+                    FixedAPIRequest["pause"]["paused_requested_team"] =  "none"
+                    FixedAPIRequest["pause"]["unpaused_timer"] =  0.0
+                    FixedAPIRequest["pause"]["paused_timer"] =  0.0
+                    
+                    FixedAPIRequest["client_name"] = "ECRanked"
+
+                    
+                
+
+                    #print(FixedAPIRequest)
+
+                    timeStr = datetime.strftime(start_time + timedelta(milliseconds=(framecount*timeBetweenFrame)),"%Y/%m/%d %H:%M:%S.%f")[:-3]
+                    APIStr = timeStr + "\t" + json.dumps(FixedAPIRequest) + "\n"
+                    
+                    framecount += 1
+                    export.write(APIStr)
         
+            data = open(TempExport).read()
+            zipObj = zipfile.ZipFile(ExportPath, 'w',compression=zipfile.ZIP_DEFLATED,compresslevel=9)
 
-        with open(ExportPath,"a") as export:
-            start_time = datetime.strptime(data["start_time"],"%Y-%m-%d %H-%M-%S")
-
-            timeBetweenFrame = (1/int(data["framerate"])*1000)
-
-            
-            playerDatas = data["players"]
-            PlayerIDToData = dict()
-            for key,player in playerDatas.items():
-                temp = dict()
-                temp["name"] = player["name"]
-                temp["userid"] = int(key)
-                temp["playerid"] = player["playerID"]
-                temp["level"] = player["level"]
-                temp["number"] = player["number"]
-
-                temp["ping"] = 0
-                temp["packetlossratio"] = 0.0
-                PlayerIDToData[str(player["playerID"])] = temp
-
-
-            framecount = 0 
-            for frame in data["data"]:
-                FixedAPIRequest = dict()
-                FixedAPIRequest["sessionid"] = data["sessionid"]
-                FixedAPIRequest["sessionip"] = "0.0.0.0"
-                FixedAPIRequest["match_type"] = "Echo_Combat"
-                if map == "combustion": MapName = "mpl_combat_combustion"
-                if map == "dyson": MapName = "mpl_combat_dyson"
-                if map == "fission": MapName = "mpl_combat_fission"
-                if map == "surge": MapName = "mpl_combat_gauss"
-
-                FixedAPIRequest["map_name"] = MapName
-                
-                FixedAPIRequest["teams"] = []
-                blueTeam = dict()
-                blueTeam["team"] = "BLUE TEAM"
-                blueTeam["players"] = list()    
-                blueTeam["players"].append(createPlayerInfo(PlayerIDToData["0"],frame["teams"][0][0]))    
-                blueTeam["players"].append(createPlayerInfo(PlayerIDToData["1"],frame["teams"][0][1]))    
-                blueTeam["players"].append(createPlayerInfo(PlayerIDToData["2"],frame["teams"][0][2]))    
-                blueTeam["players"].append(createPlayerInfo(PlayerIDToData["3"],frame["teams"][0][3]))  
-                FixedAPIRequest["teams"].append(blueTeam)
-
-                orangeTeam = dict()
-                orangeTeam["team"] = "ORANGE TEAM"
-                orangeTeam["players"] = list()    
-                orangeTeam["players"].append(createPlayerInfo(PlayerIDToData["4"],frame["teams"][1][0]))    
-                orangeTeam["players"].append(createPlayerInfo(PlayerIDToData["5"],frame["teams"][1][1]))    
-                orangeTeam["players"].append(createPlayerInfo(PlayerIDToData["6"],frame["teams"][1][2]))    
-                orangeTeam["players"].append(createPlayerInfo(PlayerIDToData["7"],frame["teams"][1][3]))  
-                FixedAPIRequest["teams"].append(orangeTeam)
-
-                FixedAPIRequest["teams"].append({"team":"SPECTATOR TEAM"})
-                
-                
-                
-                FixedAPIRequest["player"] = {
-                    "vr_left":[0,0,0],
-                    "vr_position":[0,0,0],
-                    "vr_forward":[0,0,0],
-                    "vr_up":[0,0,0],
-                    }
-                
-                FixedAPIRequest["private_match"] =  False
-                FixedAPIRequest["tournament_match"] =  False
-                
-                FixedAPIRequest["pause"] = dict()
-                FixedAPIRequest["pause"]["paused_state"] =  "none"
-                FixedAPIRequest["pause"]["unpaused_team"] =  "none"
-                FixedAPIRequest["pause"]["paused_requested_team"] =  "none"
-                FixedAPIRequest["pause"]["unpaused_timer"] =  0.0
-                FixedAPIRequest["pause"]["paused_timer"] =  0.0
-                
-                FixedAPIRequest["client_name"] = "ECRanked"
-
-                
-               
-
-                #print(FixedAPIRequest)
-
-                timeStr = datetime.strftime(start_time + timedelta(milliseconds=(framecount*timeBetweenFrame)),"%Y/%m/%d %H:%M:%S.%f")[:-3]
-                APIStr = timeStr + "\t" + json.dumps(FixedAPIRequest) + "\n"
-                
-                framecount += 1
-                export.write(APIStr)
-            
-
-
-
-
-
-
-
-        quit()
-        with open(f"{mapPath}/JsonData.json","w+") as f:
-            f.write(json.dumps(data))
-
+            # Add multiple files to the zip
+            zipObj.write('tempExport.txt')
+            zipObj.close()
+            os.remove(TempExport)
+        except:
+            print(f"ERROR: {REPLAYDIRECTORY}/{map}/{match}")
 

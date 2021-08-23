@@ -6,12 +6,12 @@ import bz2
 import pickle
 import win32ui
 import os
-framerate = 20
+framerate = 60
 
 import traceback
 
 
-
+import zipfile
 import psutil
 import subprocess 
 
@@ -41,127 +41,88 @@ def HandleGame():
     #Game just starting up
     print("GAME STARTED")
     print(f"SESSION ID = \"{jsonData['sessionid']}\"")
+    StartTimeSTR = datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f")[:-3]
+    mapSaveLocation = ""
+    CrashGameID = ""     
+    jsonData = dict()  
 
-    CurrentGame = dict()
-    CurrentGame["sessionid"] = jsonData["sessionid"]
-    CurrentGame["map_name"] = jsonData["map_name"]
-    CurrentGame["start_time"] = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
-    CurrentGame["framerate"] = 10
-    CurrentGame["players"] = dict()
-    CurrentGame["data"] = []
-    CurrentGame["version"] = 1.1
-    CrashGameID = ""       
-    while True:
-        try:
-            r = requests.get('http://127.0.0.1:6721/session')
-            if r.status_code == 404:
-                print(f"Game Finish! {CurrentGame['sessionid']}")     
+    with open("currentgame.echoreplay","a") as currentGametxt:
+        while True:
+            try:
+                r = requests.get('http://127.0.0.1:6721/session')
+                jsonData = r.json()
+                if r.status_code == 404:
+                    print(f"Game Finish! {CurrentGame['sessionid']}")     
 
-                CrashGameID == ""
-                CurrentGame["players"] = ActivePlayerList
+                    CrashGameID == ""
 
-                if CurrentGame['map_name'] == "mpl_combat_dyson" : mapSaveLocation = "dyson" 
-                if CurrentGame['map_name'] == "mpl_combat_combustion" : mapSaveLocation = "combustion" 
-                if CurrentGame['map_name'] == "mpl_combat_fission" : mapSaveLocation = "fission" 
-                if CurrentGame['map_name'] == "mpl_combat_gauss" : mapSaveLocation = "surge" 
-                with bz2.BZ2File(f"{ReplayFilePath}/{mapSaveLocation}/{{1.1}}[{CurrentGame['start_time']}] {CurrentGame['sessionid']}.ecrreplay", 'wb') as f:
-                    pickle.dump(CurrentGame, f)
+                    if jsonData['map_name'] == "mpl_combat_dyson" : mapSaveLocation = "dyson" 
+                    if jsonData['map_name'] == "mpl_combat_combustion" : mapSaveLocation = "combustion" 
+                    if jsonData['map_name'] == "mpl_combat_fission" : mapSaveLocation = "fission" 
+                    if jsonData['map_name'] == "mpl_combat_gauss" : mapSaveLocation = "surge" 
+                  
+                    break
+
+
+                    
+
+                jsonData = r.json()
+                if CrashGameID != "" and CrashGameID != jsonData["sessionid"]:
+                    print(f"Game Crash Finish! {CurrentGame['sessionid']}")     
+
+                    CrashGameID == ""
+                    CurrentGame["players"] = ActivePlayerList
+
+                    if jsonData['map_name'] == "mpl_combat_dyson" : mapSaveLocation = "dyson" 
+                    if jsonData['map_name'] == "mpl_combat_combustion" : mapSaveLocation = "combustion" 
+                    if jsonData['map_name'] == "mpl_combat_fission" : mapSaveLocation = "fission" 
+                    if jsonData['map_name'] == "mpl_combat_gauss" : mapSaveLocation = "surge" 
                 
-                saveStrippedVersion(CurrentGame,ActivePlayerList)
+                    break
+
+                #During entire game
+                FrameCount += 1
+                t += 1/framerate
+
+                time.sleep(max(0,t-time.time()))  
                 
-                break
+                Nowtime = datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f")[:-3]
+                currentGametxt.write(f"{Nowtime}\t{r.text}\n")
+                print(f"Capturing Frame! [{FrameCount}] ({Nowtime})")
+            except Exception as e: 
+                traceback.print_exc()
+                print("Game Crash!")
+                CrashGameID = jsonData["sessionid"]
+                print("Waiting 5s")
+                time.sleep(5)
+                if not process_exists("echovr.exe"):
+                    print("Echo VR Restarting!")
+                    subprocess.Popen(['run.bat'])
+                    print("Waiting 30s")
+                    time.sleep(45)
+                else:
+                    for proc in psutil.process_iter():
+                        # check whether the process name matches
+                        if proc.name() == "echovr.exe":
+                            proc.kill()
+                        if proc.name() == "BsSndRpt64.exe":
+                            proc.kill()
+                print("Waiting 10s")
+                time.sleep(10)
+                print("Done!")   
 
 
-                
+    zipObj = zipfile.ZipFile(f"{ReplayFilePath}/{mapSaveLocation}/[{StartTimeSTR}] {jsonData['sessionid']}.echoreplay", 'w',compression=zipfile.ZIP_DEFLATED,compresslevel=9)
 
-            jsonData = r.json()
-            if CrashGameID != "" and CrashGameID != jsonData["sessionid"]:
-                print(f"Game Crash Finish! {CurrentGame['sessionid']}")     
-
-                CrashGameID == ""
-                CurrentGame["players"] = ActivePlayerList
-
-                if CurrentGame['map_name'] == "mpl_combat_dyson" : mapSaveLocation = "dyson" 
-                if CurrentGame['map_name'] == "mpl_combat_combustion" : mapSaveLocation = "combustion" 
-                if CurrentGame['map_name'] == "mpl_combat_fission" : mapSaveLocation = "fission" 
-                if CurrentGame['map_name'] == "mpl_combat_gauss" : mapSaveLocation = "surge" 
-                with bz2.BZ2File(f"{ReplayFilePath}/{mapSaveLocation}/{{1.1}}[{CurrentGame['start_time']}] {CurrentGame['sessionid']}.ecrreplay", 'wb') as f:
-                    pickle.dump(CurrentGame, f)
-                saveStrippedVersion(CurrentGame,ActivePlayerList)
-
-                break
-
-            #During entire game
-            FrameCount += 1
-            t += 1/framerate
-            jsonData = r.json()
-
-            frameData = dict()
-            teamData = jsonData["teams"]
-
-            frameData["teams"] = []
-
-            for i in range(3):
-                team = teamData[i]
-                SavedTeamData = list()
-                if "players" in team:
-                    for player in team["players"]:
-                        if str(player["userid"]) not in ActivePlayerList:
-                            PlayerData = dict()
-                            PlayerData["name"] = player["name"]
-                            PlayerData["number"] = player["number"]
-                            PlayerData["level"] = player["level"]
-                            PlayerData["playerID"] = len(ActivePlayerList)
-                            ActivePlayerList[str(player["userid"])] = PlayerData
-                        
-                        id = ActivePlayerList[str(player["userid"])]["playerID"]
-                        SavedPlayerData = dict()
-                        SavedPlayerData["id"] = id
-                        SavedPlayerData["r"] = [player["rhand"]["pos"],player["rhand"]["forward"],player["rhand"]["left"],player["rhand"]["up"]]
-                        SavedPlayerData["l"] = [player["lhand"]["pos"],player["lhand"]["forward"],player["lhand"]["left"],player["lhand"]["up"]]
-                        SavedPlayerData["h"] = [player["head"]["position"],player["head"]["forward"],player["head"]["left"],player["head"]["up"]]
-                        SavedPlayerData["b"] = [player["body"]["position"],player["head"]["forward"],player["head"]["left"],player["head"]["up"]]
-                        SavedPlayerData["v"] = player["velocity"]
-                        SavedPlayerData["p"] = player["ping"]
-                        SavedTeamData.append(SavedPlayerData)
-                frameData["teams"].append(SavedTeamData)
-
-
-                        
-
-
-            CurrentGame["data"].append(frameData)
-            time.sleep(max(0,t-time.time()))  
-            value = timedelta(seconds=t-startingTime)
-            print(f"Capturing Frame! [{FrameCount}] ({value})")
-        except Exception as e: 
-            traceback.print_exc()
-            print("Game Crash!")
-            CrashGameID = CurrentGame["sessionid"]
-            print("Waiting 5s")
-            time.sleep(5)
-            if not process_exists("echovr.exe"):
-                print("Echo VR Restarting!")
-                subprocess.Popen(['run.bat'])
-                print("Waiting 30s")
-                time.sleep(45)
-            else:
-                for proc in psutil.process_iter():
-                    # check whether the process name matches
-                    if proc.name() == "echovr.exe":
-                        proc.kill()
-                    if proc.name() == "BsSndRpt64.exe":
-                        proc.kill()
-            print("Waiting 10s")
-            time.sleep(10)
-            print("Done!")     
+    # Add multiple files to the zip
+    zipObj.write('currentgame.echoreplay')
+    zipObj.close()
+    os.remove("currentgame.echoreplay")  
 
 
 
 
     
-            
-
 def saveStrippedVersion(CurrentGame,ActivePlayerList):
     PositionData = dict()
     

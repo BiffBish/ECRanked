@@ -12,3 +12,4 @@ core/__pycache__/**
 data
 data/**
 *.ecrreplay
+*.ecrreplay
