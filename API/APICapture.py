@@ -41,7 +41,7 @@ def HandleGame():
     #Game just starting up
     print("GAME STARTED")
     print(f"SESSION ID = \"{jsonData['sessionid']}\"")
-    StartTimeSTR = datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f")[:-3]
+    StartTimeSTR = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
     mapSaveLocation = ""
     CrashGameID = ""     
     jsonData = dict()  

@@ -60,8 +60,10 @@ for map in os.listdir(REPLAYDIRECTORY):
     mapPath = f"{REPLAYDIRECTORY}/{map}"
     for match in os.listdir(mapPath):
         try:
+            #print(f"Saving replay to path : {ExportPath}")
+
             matchPath = f"{REPLAYDIRECTORY}/{map}/{match}"
-            ExportPath = f"{EXPORTDIRECTORY}/{map}/{match.split('.')[0]}.echoreplay"
+            ExportPath = f"{EXPORTDIRECTORY}/{map}/{'.'.join(match.split('.')[:-1]) }.echoreplay"
             TempExport = "tempExport.txt"
             print(matchPath)
             with bz2.open(matchPath) as f:
@@ -83,8 +85,11 @@ for map in os.listdir(REPLAYDIRECTORY):
                     temp["playerid"] = player["playerID"]
                     temp["level"] = player["level"]
                     temp["number"] = player["number"]
-
-                    temp["ping"] = 0
+                    
+                    if "ping" in player:
+                        temp["ping"] = player["ping"]
+                    else:
+                        temp["ping"] = 0
                     temp["packetlossratio"] = 0.0
                     PlayerIDToData[str(player["playerID"])] = temp
 
@@ -156,6 +161,7 @@ for map in os.listdir(REPLAYDIRECTORY):
                     export.write(APIStr)
         
             data = open(TempExport).read()
+            print(f"Saving replay to path : {ExportPath}")
             zipObj = zipfile.ZipFile(ExportPath, 'w',compression=zipfile.ZIP_DEFLATED,compresslevel=9)
 
             # Add multiple files to the zip
