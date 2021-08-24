@@ -44,6 +44,7 @@ def MakeSkim(inputdata):
                             playerData["number"] = player["number"]
                             playerData["level"] = player["level"]
                             playerData["stats"] = dict()
+                            playerData["stats"]["totalFrames"] = 0
                             playerData["stats"]["totalSpeedPerFrame"] = 0
                             playerData["stats"]["upsideDownFrames"] = 0
                             playerData["stats"]["stoppedFrames"] = 0
@@ -52,7 +53,7 @@ def MakeSkim(inputdata):
                         playerPosition = player["head"]["position"]
                         playerHeadRotationUp = player["head"]["up"]
                         velocity = player["velocity"]
-
+                        skimData["players"][player["name"]]["stats"]["totalFrames"] += 1
                         if playerHeadRotationUp[1] < 0:
                             skimData["players"][player["name"]]["stats"]["upsideDownFrames"] += 1
                         
