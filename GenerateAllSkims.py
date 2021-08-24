@@ -1,8 +1,8 @@
 EXPORTPATH = "D:/ECRanked/Skims"
 IMPORTPATH = "D:/ECRanked/Replays"
 
-EXPORTPATH = "Skims"
-IMPORTPATH = "Replays"
+# EXPORTPATH = "Skims"
+# IMPORTPATH = "Replays"
 import time
 import os
 import json
