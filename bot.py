@@ -104,7 +104,7 @@ if __name__ == '__main__':
             print("Started")
             self.guild = await self.fetch_guild(779349159852769310)
             testingChannel = await self.fetch_channel(873299154045136957)
-            await testingChannel.send("Starting")
+            await testingChannel.send("Starting v2.0")
             #await EloRecaculation()
             await MainLeaderboard(self)
             self.mapData = await statistics.LoadMapsIntoMemory(testingChannel)
