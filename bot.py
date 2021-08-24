@@ -177,6 +177,23 @@ if __name__ == '__main__':
         await ctx.send(file=f,embed=e)
 
     @bot.slash.slash(
+        name="runConversion",
+        description="No",
+        default_permission=False,
+        permissions={
+                779349159852769310: [
+                create_permission(301343234108424192, SlashCommandPermissionType.USER, True)
+                ]
+            },
+        guild_ids=GUILD_IDS,
+    )
+    async def _runConversion(ctx):
+        await ctx.send(content="Running Conversions.... Good luck!")
+        subprocess.Popen(['Caculations/ConvertToEchoReplay.py'])
+        print("Runnign COnvrsion")
+        quit()
+
+    @bot.slash.slash(
         name="mapstats",
         description="See general map statistics",
         guild_ids=GUILD_IDS,

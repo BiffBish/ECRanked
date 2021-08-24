@@ -1,8 +1,8 @@
 EXPORTPATH = "D:/ECRanked/Skims"
 IMPORTPATH = "D:/ECRanked/Replays"
 
-# EXPORTPATH = "Skims"
-# IMPORTPATH = "Replays"
+EXPORTPATH = "Skims"
+IMPORTPATH = "Replays"
 import time
 import os
 import json
@@ -45,6 +45,7 @@ def MakeSkim(inputdata):
                             playerData["level"] = player["level"]
                             playerData["stats"] = dict()
                             playerData["stats"]["totalFrames"] = 0
+                            playerData["stats"]["totalPing"] = 0
                             playerData["stats"]["totalSpeedPerFrame"] = 0
                             playerData["stats"]["upsideDownFrames"] = 0
                             playerData["stats"]["stoppedFrames"] = 0
@@ -62,6 +63,8 @@ def MakeSkim(inputdata):
 
                         if speed < 1:
                             skimData["players"][player["name"]]["stats"]["stoppedFrames"] += 1
+                        
+                        skimData["players"][player["name"]]["stats"]["totalPing"] += player["ping"]
 
                         
 
