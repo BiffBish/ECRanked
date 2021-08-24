@@ -177,7 +177,7 @@ if __name__ == '__main__':
         await ctx.send(file=f,embed=e)
 
     @bot.slash.slash(
-        name="runConversion",
+        name="convert",
         description="No",
         default_permission=False,
         permissions={
