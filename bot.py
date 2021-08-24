@@ -48,7 +48,7 @@ if __name__ == '__main__':
 
     import sys
     import statistics
-
+    import os
     initial_extensions = ["button_cogs.results"]
 
     intents = discord.Intents.default()
@@ -189,7 +189,8 @@ if __name__ == '__main__':
     )
     async def _runConversion(ctx):
         await ctx.send(content="Running Conversions.... Good luck!")
-        subprocess.Popen(['Caculations/ConvertToEchoReplay.py'])
+        os.system('python Caculations/ConvertToEchoReplay.py')
+        #subprocess.Popen(['Caculations/ConvertToEchoReplay.py'])
         print("Runnign COnvrsion")
         quit()
 
