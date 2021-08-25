@@ -13,3 +13,4 @@ data
 data/**
 *.ecrreplay
 *.ecrreplay
+*.echoreplay
