@@ -104,7 +104,7 @@ if __name__ == '__main__':
             print("Started")
             self.guild = await self.fetch_guild(779349159852769310)
             testingChannel = await self.fetch_channel(873299154045136957)
-            await testingChannel.send("Starting v2.0")
+            await testingChannel.send("Starting v2.1")
             #await EloRecaculation()
             await MainLeaderboard(self)
             self.mapData = await statistics.LoadMapsIntoMemory(testingChannel)
@@ -189,7 +189,7 @@ if __name__ == '__main__':
     )
     async def _runConversion(ctx):
         await ctx.send(content="Running Conversions.... Good luck!")
-        os.system('python Caculations/ConvertToEchoReplay.py')
+        os.system('python ConvertToEchoReplay.py')
         #subprocess.Popen(['Caculations/ConvertToEchoReplay.py'])
         print("Runnign COnvrsion")
         quit()
@@ -526,8 +526,7 @@ if __name__ == '__main__':
         embed=discord.Embed(title="UnknownPubStatistics", description=unknowntotal, color=0xff0000)
         await channel.send(embed=embed)
 
-        
-
+    
 
 
     async def GlobalStats(gamemode = 0):
