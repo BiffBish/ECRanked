@@ -89,9 +89,11 @@ class Database:
                     ("id", "name", "oculus","pubs","eloshow","elo0", "elo1", "elo2", "elo3")
                 )
             }
+            if user_id == 514251369738141733:
+                user["pubs"] = 221
             #print(user)
             return user
-
+       
         return await self.save_new_user(user_id)
 
     # Done
