@@ -4,7 +4,7 @@ import os
 
 maps = ["combustion","dyson","fission","surge"]
 for map in maps:
-    mapPath = f"D:/Replays/{map}"
+    mapPath = f"E:/Replays/{map}"
     files = os.listdir(mapPath)
     for f in files:
         print(f)

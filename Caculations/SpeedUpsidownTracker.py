@@ -3,7 +3,7 @@ import os
 import pickle
 import bz2
 
-REPLAYDIRECTORY = "D:/ECRanked/Replays"
+REPLAYDIRECTORY = "E:/ECRanked/Replays"
    
 
 def ProcessSpeedOverTime(data,f):
