@@ -15,8 +15,8 @@ import zipfile
 import psutil
 import subprocess 
 
-SkimFilePath = "D:/ECRanked/Skims"
-ReplayFilePath = "D:/ECRanked/Replays"
+SkimFilePath = "E:/ECRanked/Skims"
+ReplayFilePath = "E:/ECRanked/Replays"
 
 def process_exists(process_name):
     call = 'TASKLIST', '/FI', 'imagename eq %s' % process_name

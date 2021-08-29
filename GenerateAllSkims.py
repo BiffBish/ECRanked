@@ -1,5 +1,5 @@
-EXPORTPATH = "D:/ECRanked/Skims"
-IMPORTPATH = "D:/ECRanked/Replays"
+EXPORTPATH = "E:/ECRanked/Skims"
+IMPORTPATH = "E:/ECRanked/Replays"
 
 # EXPORTPATH = "Skims"
 # IMPORTPATH = "ConvertedReplays"
