@@ -58,8 +58,8 @@ def createPlayerInfo(PlayerData,FramePlayerData):
         
     return player
 
-REPLAYDIRECTORY = "E:/ECRanked/Replays"
-EXPORTDIRECTORY = "E:/ECRanked/ConvertedReplays"
+REPLAYDIRECTORY = "D:/ECRanked/Replays"
+EXPORTDIRECTORY = "D:/ECRanked/ConvertedReplays"
 #REPLAYDIRECTORY = "Replays"
 #EXPORTDIRECTORY = "ConvertedReplays"
 
