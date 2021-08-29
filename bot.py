@@ -192,7 +192,6 @@ if __name__ == '__main__':
         os.system('python Caculations/GenerateAllSkims.py')
         #subprocess.Popen(['Caculations/ConvertToEchoReplay.py'])
         print("Runnign COnvrsion")
-        quit()
 
     @bot.slash.slash(
         name="mapstats",
