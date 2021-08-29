@@ -90,9 +90,9 @@ class Database:
                 )
             }
             if user_id == 514251369738141733:
-                user["pubs"] = 21
+                user["pubs"] = 1
             if user_id == 806596988988555335:
-                user["pubs"] = 642
+                user["pubs"] = 999999
 
             #print(user)
             return user
