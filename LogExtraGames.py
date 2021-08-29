@@ -92,18 +92,18 @@ for user in userDatas:
 for map in maps:
     for match in os.listdir(f"E:/ECRanked/Skims/{map}"):
         MatchID = match[-41:-5]
-        MatchData = json.load(open(f"E:/ECRanked/Skims/{map}/{match}"))
-        MatchTime = datetime.strptime(MatchData["start_time"],"%Y/%m/%d %H:%M:%S")
-        NamesToAdd = list()
-        for name, player in MatchData["players"].items():
-            NamesToAdd.append(name)
-            if name in lookupTable:
-                userID = int(lookupTable[name])
-                userData = get_player_info(userID)
-                set_player_pubs(userID,userData["pubs"]+1)    
-
-        log_pub_game(MatchID,MatchTime,NamesToAdd)
         if MatchID not in SavedIDs:
+            MatchData = json.load(open(f"E:/ECRanked/Skims/{map}/{match}"))
+            MatchTime = datetime.strptime(MatchData["start_time"],"%Y/%m/%d %H:%M:%S")
+            NamesToAdd = list()
+            for name, player in MatchData["players"].items():
+                NamesToAdd.append(name)
+                if name in lookupTable:
+                    userID = int(lookupTable[name])
+                    userData = get_player_info(userID)
+                    set_player_pubs(userID,userData["pubs"]+1)    
+
+            log_pub_game(MatchID,MatchTime,NamesToAdd)
             print(MatchID)
             NumExtraMaps+=1
 
