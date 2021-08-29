@@ -1,4 +1,5 @@
 if __name__ == '__main__':
+    BotVersion = "2.2"
     import asyncio
     import discord
     import traceback
@@ -104,7 +105,7 @@ if __name__ == '__main__':
             print("Started")
             self.guild = await self.fetch_guild(779349159852769310)
             testingChannel = await self.fetch_channel(873299154045136957)
-            await testingChannel.send("Starting v2.1")
+            await testingChannel.send(f"Starting v{BotVersion}")
             #await EloRecaculation()
             await MainLeaderboard(self)
             self.mapData = await statistics.LoadMapsIntoMemory(testingChannel)
