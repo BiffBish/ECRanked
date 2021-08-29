@@ -173,6 +173,7 @@ async def GameMapOverTime(data):
         cumulative[map] = list()
         maptimes = list()
         for game in data[map]:
+            print(game)
             mapTime = game["start_time"]
             maptimes.append(mapTime)
         maptimes.sort()
