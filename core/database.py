@@ -89,10 +89,10 @@ class Database:
                     ("id", "name", "oculus","pubs","eloshow","elo0", "elo1", "elo2", "elo3")
                 )
             }
-            if user_id == 514251369738141733:
-                user["pubs"] = 1
-            if user_id == 806596988988555335:
-                user["pubs"] = 999999
+            # if user_id == 514251369738141733:
+            #     user["pubs"] = 1
+            # if user_id == 806596988988555335:
+            #     user["pubs"] = 999999
 
             #print(user)
             return user
