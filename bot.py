@@ -189,7 +189,7 @@ if __name__ == '__main__':
     )
     async def _runConversion(ctx):
         await ctx.send(content="Running Conversions.... Good luck!")
-        os.system('python Caculatons/GenerateAllSkims.py')
+        os.system('python Caculations/GenerateAllSkims.py')
         #subprocess.Popen(['Caculations/ConvertToEchoReplay.py'])
         print("Runnign COnvrsion")
         quit()
