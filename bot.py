@@ -1,5 +1,5 @@
 if __name__ == '__main__':
-    BotVersion = "2.2"
+    BotVersion = "2.3"
     import asyncio
     import discord
     import traceback
@@ -306,7 +306,37 @@ if __name__ == '__main__':
         await bot.database.set_oculus_name(user.id,name)
         await ctx.send("Oculus for \""+name+"\" Linked")
         pass
-
+    
+    @bot.slash.slash(
+        name="updateelos",
+        description="Recaculate ELO",
+        default_permission=False,
+        permissions={
+                779349159852769310: [
+                create_permission(301343234108424192, SlashCommandPermissionType.USER, True)
+                ]
+            },
+        options=[
+            create_option(
+                name="hideprogress",
+                description="Hide the progress (makes it faster)",
+                option_type=4,
+                required=False,
+                choices=[
+                    create_choice(
+                        name="True",
+                        value=1
+                    )
+                ]
+            ) 
+        ],
+        guild_ids = [779349159852769310]
+        )
+    async def _updateelos(ctx, hideprogress=None):
+        users = bot.database.get_users_list()
+        for user in users:
+            UpdatePlayerElo(bot,user)
+        
     @bot.slash.slash(
         name="reboot",
         description="Reboot and pull from discord",

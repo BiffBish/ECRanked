@@ -12,6 +12,7 @@ user_db = sqlite3.connect("data/users.sqlite")
 user_cur = user_db.cursor()
     
 def log_pub_game(id:str, time: datetime,names:List):
+    print(f"logging {id} {time} {names}")
     try:
         game_cur.execute(
             'INSERT INTO "main"."pubs"("id","time","names")'
@@ -83,6 +84,7 @@ NumExtraMaps = 0
 userIDs = get_users_list()
 userDatas = [get_player_info(userID) for userID in userIDs]
 lookupTable = dict()
+
 
 for user in userDatas:
     if user["oculus"] is not None:
