@@ -4,7 +4,7 @@ from datetime import datetime
 from os import path
 from typing import List
 import os
-
+import time
 
 game_db = sqlite3.connect("data/games.sqlite")
 game_cur = game_db.cursor()
@@ -40,10 +40,14 @@ SavedPubGames = get_pub_games()
 #print(SavedPubGames)
 SavedIDs = [game["id"] for game in SavedPubGames]
 maps = ["combustion","dyson","fission","surge"]
+NumExtraMaps = 0
 for map in maps:
     for match in os.listdir(f"E:/ECRanked/Skims/{map}"):
         MatchID = match[-41:-5]
         if MatchID not in SavedIDs:
             print(MatchID)
+            NumExtraMaps+=1
+print(NumExtraMaps)
+time.sleep(100)
 # Gameid = create_new_1v1_game(123,345)
 # set_winner(int(gameid),345)
