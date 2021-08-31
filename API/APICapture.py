@@ -14,7 +14,7 @@ import traceback
 import zipfile
 import psutil
 import subprocess 
-
+from skims import CaculateSkims
 SkimFilePath = "E:/ECRanked/Skims"
 ReplayFilePath = "E:/ECRanked/Replays"
 
@@ -46,7 +46,7 @@ def HandleGame():
     CrashGameID = ""     
     jsonData = dict()  
 
-    with open("currentgame.echoreplay","a") as currentGametxt:
+    with open(f"{jsonData['sessionid']}.echoreplay","a") as currentGametxt:
         while True:
             try:
                 r = requests.get('http://127.0.0.1:6721/session')
@@ -114,53 +114,15 @@ def HandleGame():
     zipObj = zipfile.ZipFile(f"{ReplayFilePath}/{mapSaveLocation}/[{StartTimeSTR}] {jsonData['sessionid']}.echoreplay", 'w',compression=zipfile.ZIP_DEFLATED,compresslevel=9)
 
     # Add multiple files to the zip
-    zipObj.write('currentgame.echoreplay')
+    zipObj.write(f"{jsonData['sessionid']}.echoreplay")
     zipObj.close()
-    os.remove("currentgame.echoreplay")  
-
-
-
-
+    SkimData = CaculateSkims(open(f"{jsonData['sessionid']}.echoreplay","r").read())
     
-def saveStrippedVersion(CurrentGame,ActivePlayerList):
-    PositionData = dict()
-    
-    PositionData["sessionid"] = CurrentGame["sessionid"]
-    PositionData["map_name"] = CurrentGame["map_name"]
-    PositionData["framerate"] = CurrentGame["framerate"]
-    PositionData["start_time"] = CurrentGame["start_time"]
-    PositionData["players"] = CurrentGame["players"]
-
-
-    PlayerPosData = dict()
-
-
-
-    #Loop Through all the frames
-    for frameData in CurrentGame["data"]:
-        teamData = frameData["teams"]
-        for team in teamData:
-            for player in team:
-                playerID = str(player["id"])
-                if playerID not in PlayerPosData:
-                    PlayerPosData[playerID] = list()
-                
-                PlayerPosData[playerID].append(player["h"][0])
-
-
-    PositionData["Data"] = PlayerPosData
-
-
-
-    CurrentGame["players"] = ActivePlayerList
-    if CurrentGame['map_name'] == "mpl_combat_dyson" : mapSaveLocation = "dyson" 
-    if CurrentGame['map_name'] == "mpl_combat_combustion" : mapSaveLocation = "combustion" 
-    if CurrentGame['map_name'] == "mpl_combat_fission" : mapSaveLocation = "fission" 
-    if CurrentGame['map_name'] == "mpl_combat_gauss" : mapSaveLocation = "surge" 
-    print("saving position replay")
     with open(f"{SkimFilePath}/{mapSaveLocation}/[{CurrentGame['start_time']}] {CurrentGame['sessionid']}.ecrs", 'w') as f:
-        f.write(json.dumps(PositionData))
+        f.write(json.dumps(SkimData))
 
+    os.remove(f"{jsonData['sessionid']}.echoreplay")  
+    
 
 while True:
     try:

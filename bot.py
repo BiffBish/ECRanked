@@ -50,6 +50,7 @@ if __name__ == '__main__':
     import sys
     import statistics
     import os
+    import requests
     initial_extensions = ["button_cogs.results"]
 
     intents = discord.Intents.default()
@@ -165,17 +166,9 @@ if __name__ == '__main__':
         guild_ids=GUILD_IDS,
     )
     async def _stats(ctx, user):
-        await statistics.GameMapOverTime(bot.mapData)
-        #await statistics.GetPositionHeatMap(bot.mapData,"dyson",user)
-        # if gamemode < 4:
-        #     await GlobalStats(gamemode = gamemode )
-        # else:
-        #     await TimeOfDayHist(bot)
+        await ctx.send(requests.get(f"localhost/user/{user}").text)
 
-        f = discord.File("stats.png", filename="image.png")
-        e = discord.Embed()
-        e.set_image(url="attachment://image.png")
-        await ctx.send(file=f,embed=e)
+        
 
     @bot.slash.slash(
         name="convert",

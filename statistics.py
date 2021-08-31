@@ -36,7 +36,6 @@ MapSettings = dict()
 MapSettings["dyson"] = {
     "MapBounds":[-100,100,-40,40],
     "quality":[200*6,90*6]
-    
     }
 
 mapLoadLimit = 99999
