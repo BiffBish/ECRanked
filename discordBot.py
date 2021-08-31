@@ -291,7 +291,7 @@ if __name__ == '__main__':
                 required=True
             ) 
         ],
-        guild_ids = [779349159852769310]
+        guild_ids = [779349159852769310,872885493518467102]
         )
     async def _purge(ctx, amount = 5):
         await ctx.channel.purge(limit=amount)
@@ -411,16 +411,16 @@ if __name__ == '__main__':
 
     @tasks.loop(seconds=21600)
     async def HowToPlayReminder():
-        
-        channel = await bot.fetch_channel(GAME_CHANNEL_ID)
-        messages = await channel.history(limit=1).flatten()
-        if len(messages[0].embeds) == 0:
-            embed=discord.Embed(title="How to play!", description="You can either use the buttons below or you can use /play!", color=0xffffff)
-            components = [[
-                Button(label="Play Comet 1v1!",id = "GamePlayGamemode_0"),
-                Button(label="Play Linked 1v1!",id = "GamePlayGamemode_1")
-            ]]
-            await channel.send(embed=embed,components=components)
+        pass
+        # channel = await bot.fetch_channel(GAME_CHANNEL_ID)
+        # messages = await channel.history(limit=1).flatten()
+        # if len(messages[0].embeds) == 0:
+        #     embed=discord.Embed(title="How to play!", description="You can either use the buttons below or you can use /play!", color=0xffffff)
+        #     components = [[
+        #         Button(label="Play Comet 1v1!",id = "GamePlayGamemode_0"),
+        #         Button(label="Play Linked 1v1!",id = "GamePlayGamemode_1")
+        #     ]]
+        #     await channel.send(embed=embed,components=components)
 
     @tasks.loop(seconds=360)
     async def LeaderBoardUpdate():
