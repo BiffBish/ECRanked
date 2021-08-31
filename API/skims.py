@@ -35,7 +35,7 @@ def CaculateSkims(replaydata):
         skimData["frames"] = len(replaydata)-1
         firstFrame = json.loads(replaydata[0].split("\t")[1])
         skimData["start_time"] = replaydata[0].split("\t")[0][:-4]
-        skimData["session_id"] = firstFrame["session_id"]
+        skimData["session_id"] = firstFrame["sessionid"]
         rawMapName = firstFrame["map_name"]
         if rawMapName == "mpl_combat_combustion" :  skimData["map"] = "combustion"
         if rawMapName == "mpl_combat_dyson" :  skimData["map"] = "dyson"
