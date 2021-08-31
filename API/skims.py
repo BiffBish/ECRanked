@@ -38,7 +38,7 @@ def CaculateSkims(replaydata):
         if rawMapName == "mpl_combat_combustion" :  skimData["map"] = "combustion"
         if rawMapName == "mpl_combat_dyson" :  skimData["map"] = "dyson"
         if rawMapName == "mpl_combat_fission" :  skimData["map"] = "fission"
-        if rawMapName == "mpl_combat_surge" :  skimData["map"] = "surge"
+        if rawMapName == "mpl_combat_gauss" :  skimData["map"] = "surge"
         skimData["players"] = dict()
         PlayerPosCache = dict()
 
@@ -69,31 +69,49 @@ def CaculateSkims(replaydata):
                                 playerData["stats"] = dict()
                                 playerData["stats"]["total_frames"] = 0
                                 playerData["stats"]["total_ping"] = 0
+                                
                                 playerData["stats"]["total_speed"] = 0
+                                playerData["stats"]["frames_speed"] = 0
+
                                 playerData["stats"]["total_upsidedown"] = 0
+                                playerData["stats"]["frames_upsidedown"] = 0
+
                                 playerData["stats"]["total_stopped"] = 0
+                                playerData["stats"]["frames_stopped"] = 0
+
                                 playerData["stats"]["total_deaths"] = 0
+
                                 skimData["players"][player["name"]] = playerData
 
                             playerPosition = player["head"]["position"]
                             playerHeadRotationUp = player["head"]["up"]
                             velocity = player["velocity"]
                             skimData["players"][player["name"]]["stats"]["total_frames"] += 1
-                            if playerHeadRotationUp[1] < 0:
-                                skimData["players"][player["name"]]["stats"]["total_upsidedown"] += 1
-                            
-                            speed = ((velocity[0]**2) + (velocity[1]**2) + (velocity[2]**2))**.5
-                            skimData["players"][player["name"]]["stats"]["total_speed"] += speed
-
-                            if speed < 1:
-                                skimData["players"][player["name"]]["stats"]["total_stopped"] += 1
-                            
                             skimData["players"][player["name"]]["stats"]["total_ping"] += player["ping"]
-
                             currentPosition = player["head"]["position"]
+                            playerBodyRotation = player["body"]["up"]
+
                             oldPosition = PlayerPosCache[player["name"]]
-                            if not InBoundingBox(currentPosition,MapSettings[skimData["map"]]["MapBounds"]) and InBoundingBox(oldPosition,MapSettings[skimData["map"]]["MapBounds"]):
+
+                            if InBoundingBox(currentPosition,MapSettings[skimData["map"]]["MapBounds"]):
+                                if playerBodyRotation[1] < 0:
+                                    skimData["players"][player["name"]]["stats"]["total_upsidedown"] += 1
+                                
+                                speed = ((velocity[0]**2) + (velocity[1]**2) + (velocity[2]**2))**.5
+                                skimData["players"][player["name"]]["stats"]["total_speed"] += speed
+
+                                if speed < 1:
+                                    skimData["players"][player["name"]]["stats"]["total_stopped"] += 1
+
+
+
+                                skimData["players"][player["name"]]["stats"]["frames_stopped"] += 1
+                                skimData["players"][player["name"]]["stats"]["frames_speed"] += 1
+                                skimData["players"][player["name"]]["stats"]["frames_upsidedown"] += 1
+
+                            elif InBoundingBox(oldPosition,MapSettings[skimData["map"]]["MapBounds"]):
                                 skimData["players"][player["name"]]["stats"]["total_deaths"] += 1
+
                             PlayerPosCache[player["name"]] = currentPosition
 
 

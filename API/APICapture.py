@@ -15,6 +15,8 @@ import zipfile
 import psutil
 import subprocess 
 from skims import CaculateSkims
+import requests
+
 SkimFilePath = "E:/ECRanked/Skims"
 ReplayFilePath = "E:/ECRanked/Replays"
 
@@ -121,6 +123,11 @@ def HandleGame():
     with open(f"{SkimFilePath}/{mapSaveLocation}/[{CurrentGame['start_time']}] {CurrentGame['sessionid']}.ecrs", 'w') as f:
         f.write(json.dumps(SkimData))
 
+    Formdata = {
+            "key": "1a508f8b-1dd2-412c-aa4e-0eda0c4aa6fc",
+            "data" : json.dumps(SkimData)
+            }
+    print(requests.post(f"http://localhost/save_skim.py",data=Formdata))
     os.remove(f"{jsonData['sessionid']}.echoreplay")  
     
 

@@ -51,6 +51,7 @@ if __name__ == '__main__':
     import statistics
     import os
     import requests
+    import json
     initial_extensions = ["button_cogs.results"]
 
     intents = discord.Intents.default()
@@ -166,7 +167,34 @@ if __name__ == '__main__':
         guild_ids=GUILD_IDS,
     )
     async def _stats(ctx, user):
-        await ctx.send(requests.get(f"localhost/user/{user}").text)
+        request = requests.get(f"http://localhost/user/{user}")
+        #await ctx.send(request.status_code)
+        #await ctx.send(request.text)
+        if request.status_code == 404:
+            embed=discord.Embed(title="Stats", description=f"There are no stats for `{user}`", color=0xff0000)
+            await ctx.send(embed=embed)
+            return
+        FormatedText = request.text.replace("'",'"')
+        requestJson = json.loads(FormatedText)
+
+        average_speed = requestJson["average_speed"]
+        average_ping = requestJson["average_ping"]
+        percent_stopped = requestJson["percent_stopped"]
+        percent_upsidedown = requestJson["percent_upsidedown"]
+        total_games = requestJson["total_games"]
+        total_deaths = requestJson["total_deaths"]
+        average_deaths = requestJson["average_deaths"]
+        embed=discord.Embed(title="Stats", description=f"Here are the stats for `{user}`", color=0x00ffff)
+
+        embed.add_field(name="Total Games", value=f"{total_games}", inline=True)
+        embed.add_field(name="Total Deaths", value=f"{total_deaths}", inline=True)
+        embed.add_field(name="Average Speed", value=f"{round(average_speed,2)}m/s", inline=True)
+        embed.add_field(name="Average Ping", value=f"{round(average_ping)}ms", inline=True)
+        embed.add_field(name="Percent Stopped", value=f"{round(percent_stopped,1)}%", inline=True)
+        embed.add_field(name="Percent Upsidedown", value=f"{round(percent_upsidedown,1)}%", inline=True)
+        embed.add_field(name="Deaths per Game", value=f"{round(average_deaths,1)}", inline=True)
+
+        await ctx.send(embed= embed)
 
         
 
