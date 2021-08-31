@@ -117,14 +117,14 @@ def HandleGame():
                 print("Done!")   
 
 
-    zipObj = zipfile.ZipFile(f"{ReplayFilePath}/{mapSaveLocation}/[{StartTimeSTR}] {jsonData['sessionid']}.echoreplay", 'w',compression=zipfile.ZIP_DEFLATED,compresslevel=9)
+    zipObj = zipfile.ZipFile(f"{ReplayFilePath}/{mapSaveLocation}/[{StartTimeSTR}] {SessionID}.echoreplay", 'w',compression=zipfile.ZIP_DEFLATED,compresslevel=9)
 
     # Add multiple files to the zip
     zipObj.write(f"{SessionID}.echoreplay")
     zipObj.close()
     SkimData = CaculateSkims(open(f"{SessionID}.echoreplay","r").read())
     
-    with open(f"{SkimFilePath}/{mapSaveLocation}/[{CurrentGame['start_time']}] {CurrentGame['sessionid']}.ecrs", 'w') as f:
+    with open(f"{SkimFilePath}/{mapSaveLocation}/[{StartTimeSTR}] {SessionID}.ecrs", 'w') as f:
         f.write(json.dumps(SkimData))
 
     Formdata = {
