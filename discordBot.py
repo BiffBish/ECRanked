@@ -1,5 +1,5 @@
 if __name__ == '__main__':
-    BotVersion = "2.3"
+    BotVersion = "2.4"
     import asyncio
     import discord
     import traceback
