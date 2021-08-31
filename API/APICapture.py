@@ -122,7 +122,7 @@ def HandleGame():
     # Add multiple files to the zip
     zipObj.write(f"{SessionID}.echoreplay")
     zipObj.close()
-    SkimData = CaculateSkims(open(f"{SessionID}.echoreplay","r").read())
+    SkimData = CaculateSkims(open(f"{SessionID}.echoreplay","r").read().split("\n"))
     
     with open(f"{SkimFilePath}/{mapSaveLocation}/[{StartTimeSTR}] {SessionID}.ecrs", 'w') as f:
         f.write(json.dumps(SkimData))
@@ -141,10 +141,6 @@ while True:
         if r.status_code == 200:
             HandleGame()
         else:
-
-            list_of_files = glob.glob('/path/to/folder/*') # * means all if need specific format then *.csv
-            latest_file = max(list_of_files, key=os.path.getctime)
-            print(latest_file)
             time.sleep(10)
     except:
         traceback.print_exc()
