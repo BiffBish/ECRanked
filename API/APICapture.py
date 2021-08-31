@@ -48,7 +48,7 @@ def HandleGame():
     CrashGameID = ""     
     jsonData = dict()  
 
-    with open(f"{jsonData['sessionid']}.echoreplay","a") as currentGametxt:
+    with open(f"{jsonData['sessionid']}.echoreplay","a+") as currentGametxt:
         while True:
             try:
                 r = requests.get('http://127.0.0.1:6721/session')
