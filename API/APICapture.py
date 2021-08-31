@@ -17,6 +17,9 @@ import subprocess
 from skims import CaculateSkims
 import requests
 
+import glob
+import os
+
 SkimFilePath = "E:/ECRanked/Skims"
 ReplayFilePath = "E:/ECRanked/Replays"
 
@@ -40,15 +43,16 @@ def HandleGame():
     FrameCount = 0
     ActivePlayerList = dict()
     jsonData = r.json()
+    SessionID = jsonData['sessionid']
     #Game just starting up
     print("GAME STARTED")
-    print(f"SESSION ID = \"{jsonData['sessionid']}\"")
+    print(f"SESSION ID = \"{SessionID}\"")
     StartTimeSTR = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
     mapSaveLocation = ""
     CrashGameID = ""     
     jsonData = dict()  
 
-    with open(f"{jsonData['sessionid']}.echoreplay","a+") as currentGametxt:
+    with open(f"{SessionID}.echoreplay","a+") as currentGametxt:
         while True:
             try:
                 r = requests.get('http://127.0.0.1:6721/session')
@@ -116,9 +120,9 @@ def HandleGame():
     zipObj = zipfile.ZipFile(f"{ReplayFilePath}/{mapSaveLocation}/[{StartTimeSTR}] {jsonData['sessionid']}.echoreplay", 'w',compression=zipfile.ZIP_DEFLATED,compresslevel=9)
 
     # Add multiple files to the zip
-    zipObj.write(f"{jsonData['sessionid']}.echoreplay")
+    zipObj.write(f"{SessionID}.echoreplay")
     zipObj.close()
-    SkimData = CaculateSkims(open(f"{jsonData['sessionid']}.echoreplay","r").read())
+    SkimData = CaculateSkims(open(f"{SessionID}.echoreplay","r").read())
     
     with open(f"{SkimFilePath}/{mapSaveLocation}/[{CurrentGame['start_time']}] {CurrentGame['sessionid']}.ecrs", 'w') as f:
         f.write(json.dumps(SkimData))
@@ -128,7 +132,7 @@ def HandleGame():
             "data" : json.dumps(SkimData)
             }
     print(requests.post(f"http://localhost/save_skim.py",data=Formdata))
-    os.remove(f"{jsonData['sessionid']}.echoreplay")  
+    os.remove(f"{SessionID}.echoreplay")  
     
 
 while True:
@@ -137,6 +141,10 @@ while True:
         if r.status_code == 200:
             HandleGame()
         else:
+
+            list_of_files = glob.glob('/path/to/folder/*') # * means all if need specific format then *.csv
+            latest_file = max(list_of_files, key=os.path.getctime)
+            print(latest_file)
             time.sleep(10)
     except:
         traceback.print_exc()
