@@ -123,5 +123,5 @@ def CaculateSkims(replaydata):
     
     except:
         traceback.print_exc()
-        return {"error":"there was an error"}
+        return {"error":traceback.format_exception()}
     
