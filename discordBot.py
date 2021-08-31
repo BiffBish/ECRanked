@@ -699,6 +699,14 @@ if __name__ == '__main__':
         return stats
 
     async def StartupTask(bot):
+        
+        # totalList = []
+        # for row in self.user_cur.execute(
+        #     'SELECT "userID" FROM "main"."users"'
+        # ):
+        #     totalList.append(row[0])
+        # return totalList
+        return
         totalList = []
         channel = await bot.fetch_channel(872886014815924245)
         messages = await channel.history().flatten()
@@ -707,7 +715,6 @@ if __name__ == '__main__':
             
             bot.database.log_pub_game(names[0],msg.created_at,names[1:])
             
-        
         
         pass
 

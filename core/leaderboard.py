@@ -286,6 +286,9 @@ async def MainLeaderboard(bot):
     StatStr += "--+-------------------------------------------\n"
     counter = 0
     for i in range(10):
+        if i >= len(PubsLeaderboard):
+            StatStr += f"\n"
+            continue
         userStat = PubsLeaderboard[i]
         counter = str(userStat['placement'])
         Plays = str(userStat['pubs'])
