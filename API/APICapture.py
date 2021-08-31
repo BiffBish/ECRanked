@@ -139,6 +139,7 @@ while True:
         else:
             time.sleep(10)
     except:
+        traceback.print_exc()
         if not process_exists("echovr.exe"):
             subprocess.Popen(['run.bat'])
         time.sleep(20)     
