@@ -291,7 +291,7 @@ if __name__ == '__main__':
                 required=True
             ) 
         ],
-        guild_ids = [779349159852769310,872885493518467102]
+        guild_ids = [779349159852769310]
         )
     async def _purge(ctx, amount = 5):
         await ctx.channel.purge(limit=amount)
