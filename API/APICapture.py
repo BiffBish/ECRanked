@@ -133,6 +133,14 @@ def HandleGame():
             }
     print(requests.post(f"http://localhost/save_skim.py",data=Formdata))
     os.remove(f"{SessionID}.echoreplay")  
+
+    import requests
+    webHookUrl = "https://discord.com/api/webhooks/882380147645354055/MzYHqnqatGkoidWApt0jlN5CO7FCKyK-kaDB8epctzKGw-tKRJgNovqpWv9cWdmskspb"
+    playerIDs = list()
+    for playerName , playerData in SkimData["players"].items():
+        playerIDs = str(playerData["userid"])
+    data = {"content":",".join(playerIDs)}
+    requests.post(webHookUrl,data= data)
     
 
 while True:
