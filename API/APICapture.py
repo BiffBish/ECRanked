@@ -137,6 +137,11 @@ def HandleGame():
     playerIDs = list()
     for playerName , playerData in SkimData["players"].items():
         playerIDs = str(playerData["userid"])
+        print(playerName)
+        print(str(playerData["userid"]))
+    print("playerIds:")
+    print(playerIDs)
+
     data = {"content":",".join(playerIDs)}
     requests.post(webHookUrl,data= data)
     
