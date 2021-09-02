@@ -15,7 +15,6 @@ import zipfile
 import psutil
 import subprocess 
 from skims import CaculateSkims
-import requests
 
 import glob
 import os
@@ -134,7 +133,6 @@ def HandleGame():
     print(requests.post(f"http://localhost/save_skim.py",data=Formdata))
     os.remove(f"{SessionID}.echoreplay")  
 
-    import requests
     webHookUrl = "https://discord.com/api/webhooks/882380147645354055/MzYHqnqatGkoidWApt0jlN5CO7FCKyK-kaDB8epctzKGw-tKRJgNovqpWv9cWdmskspb"
     playerIDs = list()
     for playerName , playerData in SkimData["players"].items():
