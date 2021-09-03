@@ -34,8 +34,8 @@ def process_exists(process_name):
 
 CrashGameID = ""
 def HandleGame():
-    
-    r = requests.get('http://127.0.0.1:6721/session')
+    session = requests.Session()
+    r = session.get('http://127.0.0.1:6721/session')
     startingTime = time.time() 
     t=time.time()
     CurrentGame = dict()
@@ -60,7 +60,7 @@ def HandleGame():
         while True:
             try:
                 nowTime = datetime.now()
-                r = requests.get('http://127.0.0.1:6721/session')
+                r = session.get('http://127.0.0.1:6721/session')
                 print(f"65:  {(datetime.now() - nowTime).total_seconds()}")
                 nowTime = datetime.now()
 
