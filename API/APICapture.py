@@ -48,52 +48,46 @@ def HandleGame():
     print(f"SESSION ID = \"{SessionID}\"")
     StartTimeSTR = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
     mapSaveLocation = ""
-    CrashGameID = ""     
+    if jsonData['map_name'] == "mpl_combat_dyson" : mapSaveLocation = "dyson" 
+    if jsonData['map_name'] == "mpl_combat_combustion" : mapSaveLocation = "combustion" 
+    if jsonData['map_name'] == "mpl_combat_fission" : mapSaveLocation = "fission" 
+    if jsonData['map_name'] == "mpl_combat_gauss" : mapSaveLocation = "surge" 
+
     jsonData = dict()  
 
     with open(f"{SessionID}.echoreplay","a+") as currentGametxt:
+        CrashGameID = ""     
+        r = None
         while True:
             try:
                 r = requests.get('http://127.0.0.1:6721/session')
                 if r.status_code == 404:
-                    print(f"Game Finish! {jsonData['sessionid']}")     
-
-                    CrashGameID == ""
-
-                    if jsonData['map_name'] == "mpl_combat_dyson" : mapSaveLocation = "dyson" 
-                    if jsonData['map_name'] == "mpl_combat_combustion" : mapSaveLocation = "combustion" 
-                    if jsonData['map_name'] == "mpl_combat_fission" : mapSaveLocation = "fission" 
-                    if jsonData['map_name'] == "mpl_combat_gauss" : mapSaveLocation = "surge" 
-                  
+                    print(f"Game Finish! {jsonData['sessionid']}")    
                     break
-                jsonData = r.json()
+
+                if CrashGameID != "":
+                    jsonData = r.json()
+                    if CrashGameID != jsonData["sessionid"]:
+                        print(f"Game Crash Finish! {jsonData['sessionid']}")    
+                        break
+                    else:
+                        currentGametxt.write("\n")
+                        CrashGameID = ""
 
 
-                    
-
-                jsonData = r.json()
-                if CrashGameID != "" and CrashGameID != jsonData["sessionid"]:
-                    print(f"Game Crash Finish! {jsonData['sessionid']}")     
-
-                    CrashGameID == ""
-
-                    if jsonData['map_name'] == "mpl_combat_dyson" : mapSaveLocation = "dyson" 
-                    if jsonData['map_name'] == "mpl_combat_combustion" : mapSaveLocation = "combustion" 
-                    if jsonData['map_name'] == "mpl_combat_fission" : mapSaveLocation = "fission" 
-                    if jsonData['map_name'] == "mpl_combat_gauss" : mapSaveLocation = "surge" 
-                
-                    break
 
                 #During entire game
                 FrameCount += 1
                 t += 1/framerate
 
                 time.sleep(max(0,t-time.time()))  
-                
+            
                 Nowtime = datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f")[:-3]
+
                 currentGametxt.write(f"{Nowtime}\t{r.text}\n")
                 print(f"Capturing Frame! [{FrameCount}] ({Nowtime})")
             except Exception as e: 
+                jsonData = r.json()
                 traceback.print_exc()
                 print("Game Crash!")
                 CrashGameID = jsonData["sessionid"]
