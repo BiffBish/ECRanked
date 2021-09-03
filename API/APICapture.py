@@ -59,10 +59,10 @@ def HandleGame():
         r = None
         while True:
             try:
-                nowTime = time.now()
+                nowTime = datetime.now()
                 r = requests.get('http://127.0.0.1:6721/session')
-                print(f"65:  {(time.now() - nowTime).total_seconds()}")
-                nowTime = time.now()
+                print(f"65:  {(datetime.now() - nowTime).total_seconds()}")
+                nowTime = datetime.now()
 
                 if r.status_code == 404:
                     print(f"Game Finish! {jsonData['sessionid']}")    
@@ -76,8 +76,8 @@ def HandleGame():
                     else:
                         currentGametxt.write("\n")
                         CrashGameID = ""
-                print(f"80:  {(time.now() - nowTime).total_seconds()}")
-                nowTime = time.now()
+                print(f"80:  {(datetime.now() - nowTime).total_seconds()}")
+                nowTime = datetime.now()
                 #During entire game
                 FrameCount += 1
                 t += 1/framerate
@@ -85,12 +85,12 @@ def HandleGame():
                 #time.sleep(max(0,t-time.time()))  
             
                 Nowtime = datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f")[:-3]
-                print(f"88:  {(time.now() - nowTime).total_seconds()}")
-                nowTime = time.now()
+                print(f"88:  {(datetime.now() - nowTime).total_seconds()}")
+                nowTime = datetime.now()
                 currentGametxt.write(f"{Nowtime}\t{r.text}\n")
                 print(f"Capturing Frame! [{FrameCount}] ({Nowtime})")
-                print(f"92:  {(time.now() - nowTime).total_seconds()}")
-                nowTime = time.now()
+                print(f"92:  {(datetime.now() - nowTime).total_seconds()}")
+                nowTime = datetime.now()
             except Exception as e: 
                 jsonData = r.json()
                 traceback.print_exc()
