@@ -74,13 +74,11 @@ def HandleGame():
                         currentGametxt.write("\n")
                         CrashGameID = ""
 
-
-
                 #During entire game
                 FrameCount += 1
                 t += 1/framerate
 
-                time.sleep(max(0,t-time.time()))  
+                #time.sleep(max(0,t-time.time()))  
             
                 Nowtime = datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f")[:-3]
 
