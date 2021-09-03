@@ -53,14 +53,17 @@ def HandleGame():
     if jsonData['map_name'] == "mpl_combat_fission" : mapSaveLocation = "fission" 
     if jsonData['map_name'] == "mpl_combat_gauss" : mapSaveLocation = "surge" 
 
-    jsonData = dict()  
 
     with open(f"{SessionID}.echoreplay","a+") as currentGametxt:
         CrashGameID = ""     
         r = None
         while True:
             try:
+                nowTime = time.now()
                 r = requests.get('http://127.0.0.1:6721/session')
+                print(f"65:  {(time.now() - nowTime).total_seconds()}")
+                nowTime = time.now()
+
                 if r.status_code == 404:
                     print(f"Game Finish! {jsonData['sessionid']}")    
                     break
@@ -73,7 +76,8 @@ def HandleGame():
                     else:
                         currentGametxt.write("\n")
                         CrashGameID = ""
-
+                print(f"80:  {(time.now() - nowTime).total_seconds()}")
+                nowTime = time.now()
                 #During entire game
                 FrameCount += 1
                 t += 1/framerate
@@ -81,9 +85,12 @@ def HandleGame():
                 #time.sleep(max(0,t-time.time()))  
             
                 Nowtime = datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f")[:-3]
-
+                print(f"88:  {(time.now() - nowTime).total_seconds()}")
+                nowTime = time.now()
                 currentGametxt.write(f"{Nowtime}\t{r.text}\n")
                 print(f"Capturing Frame! [{FrameCount}] ({Nowtime})")
+                print(f"92:  {(time.now() - nowTime).total_seconds()}")
+                nowTime = time.now()
             except Exception as e: 
                 jsonData = r.json()
                 traceback.print_exc()
