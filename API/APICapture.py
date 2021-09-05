@@ -1,18 +1,15 @@
-import requests
+import faster_than_requests as requests
+
+requests.get("http://httpbin.org/get")  
 import time
 from datetime import datetime , timedelta
 import json
-import bz2
-import pickle
-import win32ui
 import os
 framerate = 60
 
 import traceback
 
-
 import zipfile
-import psutil
 import subprocess 
 from skims import CaculateSkims
 
@@ -34,8 +31,7 @@ def process_exists(process_name):
 
 CrashGameID = ""
 def HandleGame():
-    session = requests.Session()
-    r = session.get('http://127.0.0.1:6721/session')
+    r = requests.get('http://127.0.0.1:6721/session')
     startingTime = time.time() 
     t=time.time()
     CurrentGame = dict()
@@ -60,7 +56,7 @@ def HandleGame():
         while True:
             try:
                 nowTime = datetime.now()
-                r = session.get('http://127.0.0.1:6721/session')
+                r = requests.get('http://127.0.0.1:6721/session')
                 print(f"65:  {(datetime.now() - nowTime).total_seconds()}")
                 nowTime = datetime.now()
 
@@ -104,12 +100,19 @@ def HandleGame():
                     print("Waiting 30s")
                     time.sleep(45)
                 else:
-                    for proc in psutil.process_iter():
-                        # check whether the process name matches
-                        if proc.name() == "echovr.exe":
-                            proc.kill()
-                        if proc.name() == "BsSndRpt64.exe":
-                            proc.kill()
+                    subprocess = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE)
+                    output, error = subprocess.communicate()
+                    print(output)
+                    target_process = "echovr.exe"
+                    for line in output.splitlines():
+                        if target_process in str(line):
+                            pid = int(line.split(None, 1)[0])
+                            os.kill(pid, 9)
+                    target_process = "BsSndRpt64.exe"
+                    for line in output.splitlines():
+                        if target_process in str(line):
+                            pid = int(line.split(None, 1)[0])
+                            os.kill(pid, 9)
                 print("Waiting 10s")
                 time.sleep(10)
                 print("Done!")   

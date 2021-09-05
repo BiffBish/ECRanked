@@ -4,7 +4,7 @@ from discord.flags import PublicUserFlags
 
 
 if __name__ == '__main__':
-    BotVersion = "3.0"
+    BotVersion = "2.4"
     import asyncio
     import discord
     import traceback
@@ -159,7 +159,7 @@ if __name__ == '__main__':
         ],
         guild_ids=GUILD_IDS,
     )
-    async def _stats(ctx, user):
+    async def _stats(ctx, user:str):
         playerData = bot.database.get_player_info(user)
         if playerData is None:
             embed=discord.Embed(title="Stats", description=f"There are no stats for `{user}`", color=0xff0000)
@@ -182,6 +182,9 @@ if __name__ == '__main__':
         embed.add_field(name="Percent Stopped", value=f"{round(percent_stopped,1)}%", inline=True)
         embed.add_field(name="Percent Upsidedown", value=f"{round(percent_upsidedown,1)}%", inline=True)
         embed.add_field(name="Deaths per Game", value=f"{round(average_deaths,1)}", inline=True)
+
+        if user.lower() == "parcellforce":
+            embed.add_field(name="Developer Note!", value="Will throw the game to get you killed. He will announce your location to the oponents, get in your face, and be a general nuisance if your at the receving end of his bullshit. If you see him in game please say \"Bad Parcel\"", inline=True)
 
         await ctx.send(embed= embed)
 
