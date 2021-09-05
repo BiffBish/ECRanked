@@ -184,7 +184,7 @@ if __name__ == '__main__':
         embed.add_field(name="Deaths per Game", value=f"{round(average_deaths,1)}", inline=True)
 
         if user.lower() == "parcellforce":
-            embed.add_field(name="Developer Note!", value="Will throw the game to get you killed. He will announce your location to the oponents, get in your face, and be a general nuisance if your at the receving end of his bullshit. If you see him in game please say \"Bad Parcel\"", inline=True)
+            embed.add_field(name="Developer Note!", value="Will throw the game to get you killed. He will announce your location to the oponents, get in your face, and be a general nuisance if your at the receving end of his bullshit. If you see him in game please say \"Bad Parcel\"", inline=False)
 
         await ctx.send(embed= embed)
 
