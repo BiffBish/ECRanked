@@ -5,7 +5,7 @@ import time
 from datetime import datetime , timedelta
 import json
 import os
-framerate = 60
+framerate = 90
 
 import traceback
 
@@ -75,7 +75,7 @@ def HandleGame():
                 FrameCount += 1
                 t += 1/framerate
 
-                #time.sleep(max(0,t-time.time()))  
+                time.sleep(max(0,t-time.time()))  
             
                 nowTime = datetime.now()
                 currentGametxt.write(f"{nowTime}\t{r.text}\n")
@@ -93,8 +93,8 @@ def HandleGame():
                     print("Waiting 30s")
                     time.sleep(45)
                 else:
-                    subprocess = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE)
-                    output, error = subprocess.communicate()
+                    subprocessList = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE)
+                    output, error = subprocessList.communicate()
                     print(output)
                     target_process = "echovr.exe"
                     for line in output.splitlines():
@@ -136,17 +136,40 @@ def HandleGame():
 
     data = {"content":",".join(playerIDs)}
     requests.post(webHookUrl,data= data)
-    
+ 
 
+TimerToRestart = 60
 while True:
     try:
         r = requests.get('http://127.0.0.1:6721/session')
         if r.status_code == 200:
+            TimerToRestart = 60
             HandleGame()
         else:
             time.sleep(10)
+            TimerToRestart -= 1
+            if TimerToRestart <= 0 :
+                subprocess = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE)
+                output, error = subprocess.communicate()
+                print(output)
+                target_process = "echovr.exe"
+                for line in output.splitlines():
+                    if target_process in str(line):
+                        pid = int(line.split(None, 1)[0])
+                        os.kill(pid, 9)
+                time.sleep(5)
+                target_process = "BsSndRpt64.exe"
+                for line in output.splitlines():
+                    if target_process in str(line):
+                        pid = int(line.split(None, 1)[0])
+                        os.kill(pid, 9)
+                time.sleep(5)
+                subprocess.Popen(['run.bat'])
+                time.sleep(45)
+                TimerToRestart = 60
+
     except:
         traceback.print_exc()
         if not process_exists("echovr.exe"):
             subprocess.Popen(['run.bat'])
-        time.sleep(20)     
+        time.sleep(30)     
