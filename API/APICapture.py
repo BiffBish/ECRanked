@@ -69,7 +69,6 @@ def HandleGame():
                     else:
                         currentGametxt.write("\n")
                         CrashGameID = ""
-                print(f"80:  {(datetime.now() - nowTime).total_seconds()}")
                 nowTime = datetime.now()
                 #During entire game
                 FrameCount += 1
@@ -77,7 +76,6 @@ def HandleGame():
 
                 time.sleep(max(0,t-time.time()))  
             
-                nowTime = datetime.now()
                 currentGametxt.write(f"{nowTime}\t{r.text}\n")
                 print(f"Capturing Frame! [{FrameCount}] ({nowTime})")
             except Exception as e: 
@@ -96,16 +94,20 @@ def HandleGame():
                     subprocessList = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE)
                     output, error = subprocessList.communicate()
                     print(output)
-                    target_process = "echovr.exe"
-                    for line in output.splitlines():
-                        if target_process in str(line):
-                            pid = int(line.split(None, 1)[0])
-                            os.kill(pid, 9)
-                    target_process = "BsSndRpt64.exe"
-                    for line in output.splitlines():
-                        if target_process in str(line):
-                            pid = int(line.split(None, 1)[0])
-                            os.kill(pid, 9)
+                    print("Killing Echo VR")
+                    PROCNAME = "echovr.exe"
+                    for proc in psutil.process_iter():
+                        # check whether the process name matches
+                        if proc.name() == PROCNAME:
+                            proc.kill()
+                    time.sleep(5)
+                    print("Killing Bugfinder")
+                    PROCNAME = "BsSndRpt64.exe"
+                    for proc in psutil.process_iter():
+                        # check whether the process name matches
+                        if proc.name() == PROCNAME:
+                            proc.kill()
+
                 print("Waiting 10s")
                 time.sleep(10)
                 print("Done!")   
