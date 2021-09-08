@@ -1,4 +1,3 @@
-requests.get("http://httpbin.org/get")  
 import time
 from datetime import datetime , timedelta
 import json
@@ -13,6 +12,7 @@ from skims import CaculateSkims
 
 import glob
 import os
+import requests
 
 SkimFilePath = "E:/ECRanked/Skims"
 ReplayFilePath = "E:/ECRanked/Replays"
