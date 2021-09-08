@@ -13,6 +13,8 @@ from skims import CaculateSkims
 import glob
 import os
 import requests
+import psutil
+
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 SkimFilePath = "E:/ECRanked/Skims"
 ReplayFilePath = "E:/ECRanked/Replays"
@@ -144,29 +146,27 @@ while True:
             TimerToRestart = 2
             HandleGame()
         else:
+            print(f"Got 200:{TimerToRestart}")
             time.sleep(10)
             TimerToRestart -= 1
             if TimerToRestart <= 0 :
                 print("Restarting Echo VR")
 
-                subprocess = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE)
-                output, error = subprocess.communicate()
-                print(output)
-                target_process = "echovr.exe"
-                print("Killing Echo VR")
 
-                for line in output.splitlines():
-                    if target_process in str(line):
-                        pid = int(line.split(None, 1)[0])
-                        os.kill(pid, 9)
+                
+                print("Killing Echo VR")
+                PROCNAME = "echovr.exe"
+                for proc in psutil.process_iter():
+                    # check whether the process name matches
+                    if proc.name() == PROCNAME:
+                        proc.kill()
                 time.sleep(5)
                 print("Killing Bugfinder")
-
-                target_process = "BsSndRpt64.exe"
-                for line in output.splitlines():
-                    if target_process in str(line):
-                        pid = int(line.split(None, 1)[0])
-                        os.kill(pid, 9)
+                PROCNAME = "BsSndRpt64.exe"
+                for proc in psutil.process_iter():
+                    # check whether the process name matches
+                    if proc.name() == PROCNAME:
+                        proc.kill()
                 time.sleep(5)
                 print("rerunning Echo VR")
                 subprocess.Popen(['run.bat'])
