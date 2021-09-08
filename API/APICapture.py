@@ -13,7 +13,7 @@ from skims import CaculateSkims
 import glob
 import os
 import requests
-
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 SkimFilePath = "E:/ECRanked/Skims"
 ReplayFilePath = "E:/ECRanked/Replays"
 
