@@ -141,30 +141,39 @@ while True:
     try:
         r = requests.get('http://127.0.0.1:6721/session')
         if r.status_code == 200:
-            TimerToRestart = 60
+            TimerToRestart = 2
             HandleGame()
         else:
             time.sleep(10)
             TimerToRestart -= 1
             if TimerToRestart <= 0 :
+                print("Restarting Echo VR")
+
                 subprocess = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE)
                 output, error = subprocess.communicate()
                 print(output)
                 target_process = "echovr.exe"
+                print("Killing Echo VR")
+
                 for line in output.splitlines():
                     if target_process in str(line):
                         pid = int(line.split(None, 1)[0])
                         os.kill(pid, 9)
                 time.sleep(5)
+                print("Killing Bugfinder")
+
                 target_process = "BsSndRpt64.exe"
                 for line in output.splitlines():
                     if target_process in str(line):
                         pid = int(line.split(None, 1)[0])
                         os.kill(pid, 9)
                 time.sleep(5)
+                print("rerunning Echo VR")
                 subprocess.Popen(['run.bat'])
+                print("Waiting")
+
                 time.sleep(45)
-                TimerToRestart = 60
+                TimerToRestart = 2
 
     except:
         traceback.print_exc()
