@@ -138,12 +138,12 @@ def HandleGame():
     requests.post(webHookUrl,data= data)
  
 
-TimerToRestart = 2
+TimerToRestart = 60
 while True:
     try:
         r = requests.get('http://127.0.0.1:6721/session')
         if r.status_code == 200:
-            TimerToRestart = 2
+            TimerToRestart = 60
             HandleGame()
         else:
             print(f"Got 200:{TimerToRestart}")
@@ -173,7 +173,7 @@ while True:
                 print("Waiting")
 
                 time.sleep(45)
-                TimerToRestart = 2
+                TimerToRestart = 60
 
     except:
         traceback.print_exc()
