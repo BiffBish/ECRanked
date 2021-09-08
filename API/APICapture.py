@@ -1,5 +1,3 @@
-import faster_than_requests as requests
-
 requests.get("http://httpbin.org/get")  
 import time
 from datetime import datetime , timedelta
