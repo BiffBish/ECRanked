@@ -173,7 +173,7 @@ while True:
                 print("Waiting")
 
                 time.sleep(45)
-                TimerToRestart = 2
+                TimerToRestart = 60
 
     except:
         traceback.print_exc()
