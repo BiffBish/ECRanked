@@ -117,10 +117,10 @@ def HandleGame():
     zipObj.write(f"{SessionID}.echoreplay")
     zipObj.close()
     SkimData = CaculateSkims(open(f"{SessionID}.echoreplay","r").read().split("\n"))
-    
     with open(f"{SkimFilePath}/{mapSaveLocation}/[{StartTimeSTR}] {SessionID}.ecrs", 'w') as f:
         f.write(json.dumps(SkimData))
 
+    SkimData["replay_link"] = echoReplayPath
     Formdata = {
             "key": "1a508f8b-1dd2-412c-aa4e-0eda0c4aa6fc",
             "data" : json.dumps(SkimData),
