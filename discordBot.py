@@ -281,7 +281,7 @@ if __name__ == '__main__':
                 required=True
             ),
         ],
-        guild_ids=[779349159852769310,821881355003756564]
+        guild_ids=[779349159852769310,326412222119149578]
     )
     async def _stats(ctx, user:str):
         playerData = bot.database.get_player_info(user)
@@ -297,8 +297,13 @@ if __name__ == '__main__':
         total_games = playerData["total_games"]
         total_deaths = playerData["total_deaths"]
         average_deaths = playerData["average_deaths"]
-        discord_name = playerData["discord_name"]
-        discord_pfp = playerData["discord_pfp"]
+        if "discord_name" not in playerData:
+            discord_name = None
+            discord_pfp = None
+        else:
+            discord_name = playerData["discord_name"]
+            discord_pfp = playerData["discord_pfp"]
+
 
         embed=discord.Embed(title=f"Combat Stats for `{user}`", description=f"For more stats visit [ECRanked.com](http://ecranked.com/user/{user}/stats)", color=0x00ffff)
         if discord_name != None:
