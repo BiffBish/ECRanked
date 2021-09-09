@@ -4,7 +4,7 @@ from discord.flags import PublicUserFlags
 
 
 if __name__ == '__main__':
-    BotVersion = "2.9"
+    BotVersion = "2.5"
     import asyncio
     import discord
     import traceback
@@ -285,6 +285,12 @@ if __name__ == '__main__':
     )
     async def _stats(ctx, name = None):
         try:
+            if ctx.guild.id == 326412222119149578:
+                if ctx.channel.id not in [375408783091826698,328962843800109067]:
+                    embed=discord.Embed(title="Stats", description=f"Please dont use the bot in this channel. Please use <#328962843800109067> or <#375408783091826698>", color=0xff0000)
+                    await ctx.send(embed=embed)
+                    return
+
             inputedNothing = False
             if name is None:
                 inputedNothing = True
@@ -292,7 +298,7 @@ if __name__ == '__main__':
             playerData = bot.database.get_player_info(name)
             if playerData is None:
                 if inputedNothing:
-                    embed=discord.Embed(title="Stats", description=f"There are no combat stats for `{name}`\nTry setting your discord nickname to your ouclus name", color=0xff0000)
+                    embed=discord.Embed(title="Stats", description=f"There are no combat stats for `{name}`!\nTry setting your discord nickname to your oculus name.", color=0xff0000)
                 else:
                     embed=discord.Embed(title="Stats", description=f"There are no combat stats for `{name}`", color=0xff0000)
                 await ctx.send(embed=embed)
