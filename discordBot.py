@@ -287,7 +287,7 @@ if __name__ == '__main__':
         try:
             if ctx.guild.id == 326412222119149578:
                 if ctx.channel.id not in [375408783091826698,328962843800109067]:
-                    embed=discord.Embed(title="Stats", description=f"Please dont use <@852660826710999051> in this channel.\n Please use <#328962843800109067> or <#375408783091826698>", color=0xff0000)
+                    embed=discord.Embed(title="Stats", description=f"Please don't use <@852660826710999051> in this channel.\nUse <#328962843800109067> or <#375408783091826698>. Thanks!", color=0xff0000)
                     await ctx.send(embed=embed)
                     return
 
