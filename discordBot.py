@@ -294,7 +294,7 @@ if __name__ == '__main__':
             inputedNothing = False
             if name is None:
                 inputedNothing = True
-                name = ctx.author.display_name
+                name = re.match("^(?:.(?![\\[\\(\\{]))*",ctx.author.display_name).group()
             playerData = bot.database.get_player_info(name)
             if playerData is None:
                 if inputedNothing:
