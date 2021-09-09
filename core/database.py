@@ -65,6 +65,8 @@ class Database:
         if request.status_code == 404:
             return None
         FormatedText = request.text.replace("'",'"')
+        FormatedText = FormatedText.replace(": None",": null")
+        print(FormatedText+"|")
         return json.loads(FormatedText)
        
     def get_pubs_list(self):
