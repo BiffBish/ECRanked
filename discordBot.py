@@ -271,7 +271,7 @@ if __name__ == '__main__':
     
     
     @bot.slash.slash(
-        name="stats",
+        name="ecstats",
         description="Get Recorded stats from Echo Combat games",
         options=[
             create_option(
@@ -283,13 +283,13 @@ if __name__ == '__main__':
         ],
         guild_ids=[779349159852769310,326412222119149578]
     )
-    async def _stats(ctx, user = None):
+    async def _stats(ctx, name = None):
         try:
-            if user is None:
-                user = ctx.author.name
-            playerData = bot.database.get_player_info(user)
+            if name is None:
+                name = ctx.author.name
+            playerData = bot.database.get_player_info(name)
             if playerData is None:
-                embed=discord.Embed(title="Stats", description=f"There are no stats for `{user}`", color=0xff0000)
+                embed=discord.Embed(title="Stats", description=f"There are no stats for `{name}`", color=0xff0000)
                 await ctx.send(embed=embed)
                 return
             
@@ -308,7 +308,7 @@ if __name__ == '__main__':
                 discord_pfp = playerData["discord_pfp"]
 
 
-            embed=discord.Embed(title=f"Combat Stats for `{user}`", description=f"For more stats visit [ECRanked.com](http://ecranked.com/user/{user}/stats)", color=0x00ffff)
+            embed=discord.Embed(title=f"Combat Stats for `{name}`", description=f"For more stats visit [ECRanked.com](http://ecranked.com/user/{name}/stats)", color=0x00ffff)
             if discord_name != None:
                 embed.set_thumbnail(url=discord_pfp)
             embed.add_field(name="Games", value=f"{total_games}", inline=True)
@@ -320,7 +320,7 @@ if __name__ == '__main__':
             embed.add_field(name="Avg Deaths", value=f"{round(average_deaths,1)}", inline=True)
             if discord_name != None:
                 embed.add_field(name="Discord Name", value = discord_name, inline=False)
-            if user.lower() == "parcellforce":
+            if name.lower() == "parcellforce":
                 embed.add_field(name="Developer Note!", value="Will throw the game to get you killed. He will announce your location to the oponents, get in your face, and be a general nuisance if your at the receving end of his bullshit. If you see him in game please say \"Bad Parcel\"", inline=False)
 
             await ctx.send(embed= embed)
