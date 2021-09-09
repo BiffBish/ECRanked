@@ -285,7 +285,7 @@ if __name__ == '__main__':
     )
     async def _stats(ctx, name = None):
         try:
-            await ctx.send(ctx.author.name)
+            await ctx.send(ctx.author.display_name)
             await ctx.send(ctx.channel.id)
             await ctx.send(ctx.guild.id)
             if name is None:
