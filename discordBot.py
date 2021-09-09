@@ -286,7 +286,7 @@ if __name__ == '__main__':
     async def _stats(ctx, user = None):
         try:
             if user is None:
-                user = ctx.message.author.name
+                user = ctx.author.name
             playerData = bot.database.get_player_info(user)
             if playerData is None:
                 embed=discord.Embed(title="Stats", description=f"There are no stats for `{user}`", color=0xff0000)
