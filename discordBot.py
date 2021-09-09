@@ -272,11 +272,11 @@ if __name__ == '__main__':
     
     @bot.slash.slash(
         name="stats",
-        description="See stats about a user",
+        description="Get Recorded stats from Echo Combat games",
         options=[
             create_option(
-                name="user",
-                description="The user you want to see stats about",
+                name="name",
+                description="The oculus username",
                 option_type=3,
                 required=False
             ),
