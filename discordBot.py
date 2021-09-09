@@ -285,14 +285,16 @@ if __name__ == '__main__':
     )
     async def _stats(ctx, name = None):
         try:
-            await ctx.send(ctx.author.display_name)
-            await ctx.send(ctx.channel.id)
-            await ctx.send(ctx.guild.id)
+            inputedNothing = False
             if name is None:
-                name = ctx.author.member.name
+                inputedNothing = True
+                name = ctx.author.display_name
             playerData = bot.database.get_player_info(name)
             if playerData is None:
-                embed=discord.Embed(title="Stats", description=f"There are no combat stats for `{name}`", color=0xff0000)
+                if inputedNothing:
+                    embed=discord.Embed(title="Stats", description=f"There are no combat stats for `{name}`\nTry setting your discord nickname to your ouclus name", color=0xff0000)
+                else:
+                    embed=discord.Embed(title="Stats", description=f"There are no combat stats for `{name}`", color=0xff0000)
                 await ctx.send(embed=embed)
                 return
             
