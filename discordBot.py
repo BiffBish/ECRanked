@@ -4,7 +4,7 @@ from discord.flags import PublicUserFlags
 
 
 if __name__ == '__main__':
-    BotVersion = "2.4"
+    BotVersion = "2.9"
     import asyncio
     import discord
     import traceback
