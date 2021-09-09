@@ -91,9 +91,6 @@ def HandleGame():
                     print("Waiting 30s")
                     time.sleep(45)
                 else:
-                    subprocessList = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE)
-                    output, error = subprocessList.communicate()
-                    print(output)
                     print("Killing Echo VR")
                     PROCNAME = "echovr.exe"
                     for proc in psutil.process_iter():
@@ -125,9 +122,8 @@ def HandleGame():
     SkimData["replay_link"] = echoReplayPath
     Formdata = {
             "key": "1a508f8b-1dd2-412c-aa4e-0eda0c4aa6fc",
-            "data" : json.dumps(SkimData),
-            "link" : echoReplayPath
-            }
+            "data" : json.dumps(SkimData)
+    }
     print(requests.post(f"http://localhost/save_skim.py",data=Formdata))
     os.remove(f"{SessionID}.echoreplay")  
 

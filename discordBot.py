@@ -146,48 +146,7 @@ if __name__ == '__main__':
     print("setup slash _stats")
 
 
-    @bot.slash.slash(
-        name="stats",
-        description="See stats about a user",
-        options=[
-            create_option(
-                name="user",
-                description="The user you want to see stats about",
-                option_type=3,
-                required=True
-            ),
-        ],
-        guild_ids=GUILD_IDS,
-    )
-    async def _stats(ctx, user:str):
-        playerData = bot.database.get_player_info(user)
-        if playerData is None:
-            embed=discord.Embed(title="Stats", description=f"There are no stats for `{user}`", color=0xff0000)
-            await ctx.send(embed=embed)
-            return
-
-        average_speed = playerData["average_speed"]
-        average_ping = playerData["average_ping"]
-        percent_stopped = playerData["percent_stopped"]
-        percent_upsidedown = playerData["percent_upsidedown"]
-        total_games = playerData["total_games"]
-        total_deaths = playerData["total_deaths"]
-        average_deaths = playerData["average_deaths"]
-        embed=discord.Embed(title="Stats", description=f"Here are the stats for `{user}`", color=0x00ffff)
-
-        embed.add_field(name="Total Games", value=f"{total_games}", inline=True)
-        embed.add_field(name="Total Deaths", value=f"{total_deaths}", inline=True)
-        embed.add_field(name="Average Speed", value=f"{round(average_speed,2)}m/s", inline=True)
-        embed.add_field(name="Average Ping", value=f"{round(average_ping)}ms", inline=True)
-        embed.add_field(name="Percent Stopped", value=f"{round(percent_stopped,1)}%", inline=True)
-        embed.add_field(name="Percent Upsidedown", value=f"{round(percent_upsidedown,1)}%", inline=True)
-        embed.add_field(name="Deaths per Game", value=f"{round(average_deaths,1)}", inline=True)
-
-        if user.lower() == "parcellforce":
-            embed.add_field(name="Developer Note!", value="Will throw the game to get you killed. He will announce your location to the oponents, get in your face, and be a general nuisance if your at the receving end of his bullshit. If you see him in game please say \"Bad Parcel\"", inline=False)
-
-        await ctx.send(embed= embed)
-
+   
     @bot.slash.slash(
         name="mapstats",
         description="See general map statistics",
@@ -309,6 +268,54 @@ if __name__ == '__main__':
         subprocess.Popen(['update.bat'])
         print("QUITING")
         quit()
+    
+    
+    @bot.slash.slash(
+        name="stats",
+        description="See stats about a user",
+        options=[
+            create_option(
+                name="user",
+                description="The user you want to see stats about",
+                option_type=3,
+                required=True
+            ),
+        ],
+        guild_ids=[779349159852769310,821881355003756564]
+    )
+    async def _stats(ctx, user:str):
+        playerData = bot.database.get_player_info(user)
+        if playerData is None:
+            embed=discord.Embed(title="Stats", description=f"There are no stats for `{user}`", color=0xff0000)
+            await ctx.send(embed=embed)
+            return
+        
+        average_speed = playerData["average_speed"]
+        average_ping = playerData["average_ping"]
+        percent_stopped = playerData["percent_stopped"]
+        percent_upsidedown = playerData["percent_upsidedown"]
+        total_games = playerData["total_games"]
+        total_deaths = playerData["total_deaths"]
+        average_deaths = playerData["average_deaths"]
+        discord_name = playerData["discord_name"]
+        discord_pfp = playerData["discord_pfp"]
+
+        embed=discord.Embed(title=f"Combat Stats for `{user}`", description=f"For more stats visit [ECRanked.com](http://ecranked.com/user/{user}/stats)", color=0x00ffff)
+        if discord_name != None:
+            embed.set_thumbnail(url=discord_pfp)
+        embed.add_field(name="Games", value=f"{total_games}", inline=True)
+        embed.add_field(name="Deaths", value=f"{total_deaths}", inline=True)
+        embed.add_field(name="Avg Speed", value=f"{round(average_speed,2)}m/s", inline=True)
+        embed.add_field(name="Avg Ping", value=f"{round(average_ping)}ms", inline=True)
+        embed.add_field(name="Idle", value=f"{round(percent_stopped,1)}%", inline=True)
+        embed.add_field(name="Flipped", value=f"{round(percent_upsidedown,1)}%", inline=True)
+        embed.add_field(name="Avg Deaths", value=f"{round(average_deaths,1)}", inline=True)
+        if discord_name != None:
+            embed.add_field(name="Discord Name", value = discord_name, inline=False)
+        if user.lower() == "parcellforce":
+            embed.add_field(name="Developer Note!", value="Will throw the game to get you killed. He will announce your location to the oponents, get in your face, and be a general nuisance if your at the receving end of his bullshit. If you see him in game please say \"Bad Parcel\"", inline=False)
+
+        await ctx.send(embed= embed)
 
     @tasks.loop(seconds=360)
     async def LeaderBoardUpdate():
