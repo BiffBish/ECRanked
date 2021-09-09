@@ -301,6 +301,7 @@ if __name__ == '__main__':
                     embed=discord.Embed(title="Stats", description=f"There are no combat stats for `{name}`!\nTry setting your discord nickname to your oculus name.", color=0xff0000)
                 else:
                     embed=discord.Embed(title="Stats", description=f"There are no combat stats for `{name}`", color=0xff0000)
+                embed.set_footer(text="Note: Information has only been collected after September 1st 2021")
                 await ctx.send(embed=embed)
                 return
             
@@ -329,6 +330,8 @@ if __name__ == '__main__':
             embed.add_field(name="Idle", value=f"{round(percent_stopped,1)}%", inline=True)
             embed.add_field(name="Flipped", value=f"{round(percent_upsidedown,1)}%", inline=True)
             embed.add_field(name="Avg Deaths", value=f"{round(average_deaths,1)}", inline=True)
+            embed.set_footer(text="Note: Information has only been collected after September 1st 2021")
+
             if discord_name != None:
                 embed.add_field(name="Discord Name", value = discord_name, inline=False)
             if name.lower() == "parcellforce":
