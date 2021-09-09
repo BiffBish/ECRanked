@@ -281,7 +281,7 @@ if __name__ == '__main__':
                 required=True
             ),
         ],
-        guild_ids=[779349159852769310,821881355003756564]
+        guild_ids=[779349159852769310,326412222119149578]
     )
     async def _stats(ctx, user:str):
         try:
