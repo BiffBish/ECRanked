@@ -320,11 +320,11 @@ if __name__ == '__main__':
             average_deaths = playerData["average_deaths"]
             mainLoadoutStr = "No Loadout Data Available"
             if playerData["top_loadout"] is not None:
-                mainLoadout = playerData["top_loadout"][0][0]
-                
-                abilityNumber = mainLoadout % 4
-                grenadeNumber = mainLoadout - abilityNumber% 16
-                weaponNumber = mainLoadout - (abilityNumber+grenadeNumber)% 64
+                mainLoadout = int(playerData["top_loadout"][0][0])
+                abilityNumber = int(mainLoadout % 4)
+                grenadeNumber = int(((mainLoadout - abilityNumber)% 16) / 4)
+                weaponNumber = int(((mainLoadout - (abilityNumber+grenadeNumber))% 64) / 16)
+
                 mainLoadoutStr = f"{weaponName[weaponNumber]}\n {grenadeName[grenadeNumber]}\n {abilityName[abilityNumber]}" 
             if "discord_name" not in playerData:
                 discord_name = None
@@ -355,6 +355,7 @@ if __name__ == '__main__':
 
             await ctx.send(embed= embed)
         except Exception as e:
+            traceback.print_exc()
             print(e)
             embed=discord.Embed(title=f"Oops!", description = f"`{e}`", color=0x00ffff)
             await ctx.send(embed= embed)
