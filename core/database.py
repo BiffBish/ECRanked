@@ -19,7 +19,7 @@ LINKURL = f"{ECRANKEDURL}api/link.py"
 TOTALPUBSURL = f"{ECRANKEDURL}pubs"
 
 UPDATENICK = f"{ECRANKEDURL}api/update_discord_nick.py"
-
+UPDATEABOUT = f"{ECRANKEDURL}api/update_about_string.py"
 
 
 PATH = path.join(path.split(path.split(__file__)[0])[0], "data")
@@ -47,6 +47,14 @@ class Database:
             "discord_name" : discord_name,
             }
         print(requests.post(UPDATENICK,data=Formdata))
+    
+    def set_about(self, user, about):
+        Formdata = {
+            "key": APIKEY,
+            "oculus_name" : user,
+            "about_string" : about,
+            }
+        print(requests.post(UPDATEABOUT,data=Formdata))
     
     async def link_discord_oculus(self,oculus_name,discord_id,discord_name):
         

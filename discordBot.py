@@ -243,7 +243,39 @@ if __name__ == '__main__':
         await bot.database.link_discord_oculus(name,user.id,user.name)
         await ctx.send("Oculus for \""+name+"\" Linked")
         pass
-         
+
+    bot.slash.slash(
+        name="setabout",
+        description="Set an about string for a user",
+        default_permission=False,
+        permissions={
+                779349159852769310: [
+                create_permission(853058237157867541, SlashCommandPermissionType.ROLE, True)
+                ]
+            },
+        options=[
+            create_option(
+                name="name",
+                description="The Oculus username",
+                option_type=3,
+                required=True
+            ),
+            create_option(
+                name="about",
+                description="The about string",
+                option_type=3,
+                required=True
+            )
+            
+        ],
+        guild_ids=GUILD_IDS,
+    )
+    async def _link(ctx, name, about):
+        await bot.database.set_about(name,about)
+        await ctx.send("Oculus for \""+name+"\" Linked")
+        pass
+
+
     @bot.slash.slash(
         name="reboot",
         description="Reboot and pull from discord",
