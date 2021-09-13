@@ -19,7 +19,7 @@ LINKURL = f"{ECRANKEDURL}api/link.py"
 TOTALPUBSURL = f"{ECRANKEDURL}pubs"
 
 UPDATENICK = f"{ECRANKEDURL}api/update_discord_nick.py"
-UPDATEABOUT = f"{ECRANKEDURL}api/update_about_string.py"
+UPDATEABOUT = f"{ECRANKEDURL}api/update_about_string.php"
 
 
 PATH = path.join(path.split(path.split(__file__)[0])[0], "data")

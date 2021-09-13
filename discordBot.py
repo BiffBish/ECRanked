@@ -271,8 +271,8 @@ if __name__ == '__main__':
         guild_ids=GUILD_IDS,
     )
     async def _setabout(ctx, name, about):
-        await bot.database.set_about(name,about)
-        await ctx.send("Oculus for \""+name+"\" Linked")
+        bot.database.set_about(name,about)
+        await ctx.send("About for \""+name+"\" set to `"+about+"`")
         pass
 
 
@@ -377,6 +377,7 @@ if __name__ == '__main__':
             embed.add_field(name="Flipped", value=f"{round(percent_upsidedown,1)}%", inline=True)
             embed.add_field(name="Avg Deaths", value=f"{round(average_deaths,1)}", inline=True)
             embed.add_field(name="Main Loadout", value=mainLoadoutStr, inline=True)
+            embed.add_field(name="About Me", value=playerData["about_string"], inline=True)
 
             embed.set_footer(text="Note: Information has only been collected since September 1st 2021")
 
