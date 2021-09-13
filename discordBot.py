@@ -377,7 +377,15 @@ if __name__ == '__main__':
             embed.add_field(name="Flipped", value=f"{round(percent_upsidedown,1)}%", inline=True)
             embed.add_field(name="Avg Deaths", value=f"{round(average_deaths,1)}", inline=True)
             embed.add_field(name="Main Loadout", value=mainLoadoutStr, inline=True)
-            embed.add_field(name="About Me", value=playerData["about_string"], inline=True)
+            if playerData["about_string"] is None:
+                if ctx.guild.id == 326412222119149578:
+                    embed.add_field(name="About Me",value="No profile set, join echo combat longue and contact an ECR moderator to submit", inline=True)
+                else:
+                    embed.add_field(name="About Me", value="No profile set, contact an <@&853058237157867541> to submit", inline=True)
+
+            else:
+                embed.add_field(name="About Me", value=playerData["about_string"], inline=True)
+
 
             embed.set_footer(text="Note: Information has only been collected since September 1st 2021")
 
