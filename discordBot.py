@@ -350,8 +350,8 @@ if __name__ == '__main__':
 
             if discord_name != None:
                 embed.add_field(name="Discord Name", value = discord_name, inline=False)
-            if name.lower() == "parcellforce":
-                embed.add_field(name="Developer Note!", value="Will throw the game to get you killed. He will announce your location to the oponents, get in your face, and be a general nuisance if your at the receving end of his bullshit. If you see him in game please say \"Bad Parcel\"", inline=False)
+            #if name.lower() == "parcellforce":
+            #    embed.add_field(name="Developer Note!", value="Will throw the game to get you killed. He will announce your location to the oponents, get in your face, and be a general nuisance if your at the receving end of his bullshit. If you see him in game please say \"Bad Parcel\"", inline=False)
 
             await ctx.send(embed= embed)
         except Exception as e:
