@@ -4,7 +4,7 @@ from discord.flags import PublicUserFlags
 
 
 if __name__ == '__main__':
-    BotVersion = "2.5"
+    BotVersion = "2.6"
     import asyncio
     import discord
     import traceback
@@ -285,6 +285,12 @@ if __name__ == '__main__':
     )
     async def _stats(ctx, name = None):
         try:
+            weaponName = ["Pulsar","Nova","Comet","Meteor"]
+            abilityName = ["Repair Matrix","Threat Scanner","Energy Barrier","Phase Shift"]
+
+            grenadeName = ["Detonator","Stun Field","Arc Mine","Instant Repair"]
+
+
             if ctx.guild.id == 326412222119149578:
                 if ctx.channel.id not in [375408783091826698,328962843800109067,537419656181448716]:
                     embed=discord.Embed(title="Stats", description=f"Please don't use <@852660826710999051> in this channel.\nUse <#328962843800109067> or <#375408783091826698>. Thanks!", color=0xff0000)
@@ -307,11 +313,19 @@ if __name__ == '__main__':
             
             average_speed = playerData["average_speed"]
             average_ping = playerData["average_ping"]
-            percent_stopped = playerData["percent_stopped"]
-            percent_upsidedown = playerData["percent_upsidedown"]
+            percent_stopped = playerData["percent_stopped"]*100
+            percent_upsidedown = playerData["percent_upsidedown"]*100
             total_games = playerData["total_games"]
             total_deaths = playerData["total_deaths"]
             average_deaths = playerData["average_deaths"]
+            mainLoadoutStr = "No Loadout Data Available"
+            if playerData["top_loadout"] is not None:
+                mainLoadout = playerData["top_loadout"][0][0]
+                
+                abilityNumber = mainLoadout % 4
+                grenadeNumber = mainLoadout - abilityNumber% 16
+                weaponNumber = mainLoadout - (abilityNumber+grenadeNumber)% 64
+                mainLoadoutStr = f"{weaponName[weaponNumber]}\n {grenadeName[grenadeNumber]}\n {abilityName[abilityNumber]}" 
             if "discord_name" not in playerData:
                 discord_name = None
                 discord_pfp = None
@@ -330,6 +344,8 @@ if __name__ == '__main__':
             embed.add_field(name="Idle", value=f"{round(percent_stopped,1)}%", inline=True)
             embed.add_field(name="Flipped", value=f"{round(percent_upsidedown,1)}%", inline=True)
             embed.add_field(name="Avg Deaths", value=f"{round(average_deaths,1)}", inline=True)
+            embed.add_field(name="Main Loadout", value=mainLoadoutStr, inline=True)
+
             embed.set_footer(text="Note: Information has only been collected since September 1st 2021")
 
             if discord_name != None:
