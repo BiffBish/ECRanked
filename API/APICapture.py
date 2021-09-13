@@ -2,7 +2,7 @@ import time
 from datetime import datetime , timedelta
 import json
 import os
-framerate = 90
+framerate = 30
 
 import traceback
 

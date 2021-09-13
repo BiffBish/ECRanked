@@ -1,5 +1,6 @@
 import json
 import traceback
+from datetime import datetime
 MapSettings = dict()
 MapSettings["dyson"] = {
     "MapBounds":[-100,100,-40,40],
@@ -18,6 +19,22 @@ MapSettings["fission"] = {
     "quality":[200*6,90*6]
     }
 
+loadoutTable = {
+    "0xC8C33E4832761FBC" : 0, #-- Repair Matrix
+    "0x41D2D4381430080C" : 1,#-- Threat Scanner
+    "0x41D2D43513260B1A" : 2,#-- Enery Barrier
+    "0x41D2D02F1B2A1316" : 3,#-- Phase Shift
+
+    "0xC8E8D0B1A894E7FE" : 0, #-- Detonator
+    "0xC8C33E4829670BBE" : 4,#-- Stun Field
+    "0xC8E8D0B1A891F0E9" : 8,#-- Arc Mine
+    "0xE32DC7D8CC9D57A4" : 12,#-- Instant Repair
+
+    "0x2FD69C8C5F615B9E" : 0, #-- Pulsar
+    "0x2FD5839E4D605298" : 16,#-- Nova
+    "0xE32DC7C9DA8051A4" : 32,#-- Comet
+    "0x41D2D5321928020A" : 48,#-- Meteor
+}
 
 def InBoundingBox(position,Box):
     if position[0] < Box[0]:
@@ -33,10 +50,15 @@ def CaculateSkims(replaydata):
     try:
         skimData = dict()
         skimData["frames"] = len(replaydata)-1
-        firstFrame = json.loads(replaydata[0].split("\t")[1])
-        skimData["start_time"] = replaydata[0].split("\t")[0][:-4]
-        skimData["session_id"] = firstFrame["sessionid"]
-        rawMapName = firstFrame["map_name"]
+        startTime =  replaydata[0].split("\t")[0]
+        endTime =  replaydata[-2].split("\t")[0]
+        skimData["start_time"] = startTime[:-4]
+        skimData["end_time"] = endTime[:-4]
+        print (replaydata[0].split("\t")[0][:-4])
+        matchLength = datetime.strptime(endTime.replace("/","-"),"%Y-%m-%d %H:%M:%S.%f") - datetime.strptime(startTime.replace("/","-"),"%Y-%m-%d %H:%M:%S.%f")
+        skimData["match_length"] = matchLength.seconds
+        skimData["framerate"] = (skimData["frames"]/skimData["match_length"])
+        rawMapName = json.loads(replaydata[0].split("\t")[1])["map_name"]
         if rawMapName == "mpl_combat_combustion" :  skimData["map"] = "combustion"
         if rawMapName == "mpl_combat_dyson" :  skimData["map"] = "dyson"
         if rawMapName == "mpl_combat_fission" :  skimData["map"] = "fission"
@@ -82,7 +104,11 @@ def CaculateSkims(replaydata):
                                 playerData["stats"]["frames_stopped"] = 0
 
                                 playerData["stats"]["total_deaths"] = 0
-
+                                loadoutDict = dict()
+                                for i in range(64):
+                                    loadoutDict[i] = 0
+                                playerData["stats"]["loadout"] = loadoutDict
+                                playerData["stats"]["frames_loadout"] = 0
                                 skimData["players"][player["name"]] = playerData
 
                             playerPosition = player["head"]["position"]
@@ -90,6 +116,28 @@ def CaculateSkims(replaydata):
                             velocity = player["velocity"]
                             skimData["players"][player["name"]]["stats"]["total_frames"] += 1
                             skimData["players"][player["name"]]["stats"]["total_ping"] += player["ping"]
+
+                            if "Weapon" in player:
+                                Weapon = player["Weapon"]
+                                TechMod = player["Ability"]
+                                Grenade = player["Grenade"]
+
+
+                                LoadoutNumber = 0
+
+                                if Weapon in loadoutTable:
+                                    LoadoutNumber+= loadoutTable[Weapon]
+                                if Grenade in loadoutTable:
+                                    LoadoutNumber+= loadoutTable[Grenade]
+                                if TechMod in loadoutTable:
+                                    LoadoutNumber+= loadoutTable[TechMod]
+
+                                skimData["players"][player["name"]]["stats"]["loadout"][LoadoutNumber] += 1
+                                skimData["players"][player["name"]]["stats"]["frames_loadout"] += 1
+
+
+
+
                             currentPosition = player["head"]["position"]
                             playerBodyRotation = player["body"]["up"]
 
@@ -118,10 +166,8 @@ def CaculateSkims(replaydata):
 
 
             frameNumber += 1
-        
         return skimData
     
-    except:
-        traceback.print_exc()
-        return {"error":traceback.format_exception()}
+    except Exception as e:
+        return {"error":str(e)}
     
