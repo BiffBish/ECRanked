@@ -244,7 +244,7 @@ if __name__ == '__main__':
         await ctx.send("Oculus for \""+name+"\" Linked")
         pass
 
-    bot.slash.slash(
+    @bot.slash.slash(
         name="setabout",
         description="Set an about string for a user",
         default_permission=False,
@@ -270,7 +270,7 @@ if __name__ == '__main__':
         ],
         guild_ids=GUILD_IDS,
     )
-    async def _link(ctx, name, about):
+    async def _setabout(ctx, name, about):
         await bot.database.set_about(name,about)
         await ctx.send("Oculus for \""+name+"\" Linked")
         pass
