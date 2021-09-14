@@ -122,7 +122,8 @@ def HandleGame():
 
     SkimData["replay_link"] = echoReplayPath
     SkimData["skim_link"] = SkimLink
-    
+    SkimData["session_id"] = SessionID
+
     Formdata = {
             "key": "1a508f8b-1dd2-412c-aa4e-0eda0c4aa6fc",
             "data" : json.dumps(SkimData)

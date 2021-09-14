@@ -54,6 +54,7 @@ def CaculateSkims(replaydata):
         endTime =  replaydata[-2].split("\t")[0]
         skimData["start_time"] = startTime[:-4]
         skimData["end_time"] = endTime[:-4]
+
         print (replaydata[0].split("\t")[0][:-4])
         matchLength = datetime.strptime(endTime.replace("/","-"),"%Y-%m-%d %H:%M:%S.%f") - datetime.strptime(startTime.replace("/","-"),"%Y-%m-%d %H:%M:%S.%f")
         skimData["match_length"] = matchLength.seconds
@@ -64,6 +65,7 @@ def CaculateSkims(replaydata):
         if rawMapName == "mpl_combat_fission" :  skimData["map"] = "fission"
         if rawMapName == "mpl_combat_gauss" :  skimData["map"] = "surge"
         skimData["players"] = dict()
+        skimData["session_id"] = replaydata[0].split("\t")[1]["sessionid"]
         PlayerPosCache = dict()
 
         frameNumber = 0
