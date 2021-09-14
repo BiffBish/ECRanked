@@ -170,7 +170,7 @@ def CaculateSkims(replaydata):
         PlayerDict = skimData["players"]
         PlayerList = []
         for value in skimData["players"].values():
-            PlayerList.append()
+            PlayerList.append(value)
         skimData["players"] = PlayerList
         return skimData
     
