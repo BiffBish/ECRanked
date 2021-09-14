@@ -132,7 +132,7 @@ def HandleGame():
     os.remove(f"{SessionID}.echoreplay")  
 
     webHookUrl = "https://discord.com/api/webhooks/882380147645354055/MzYHqnqatGkoidWApt0jlN5CO7FCKyK-kaDB8epctzKGw-tKRJgNovqpWv9cWdmskspb"
-    playerIDs = list()
+    playerIDs = []
     for playerName , playerData in SkimData["players"].items():
         playerIDs.append(str(playerData["userid"]))
 
