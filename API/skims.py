@@ -65,7 +65,8 @@ def CaculateSkims(replaydata):
         if rawMapName == "mpl_combat_fission" :  skimData["map"] = "fission"
         if rawMapName == "mpl_combat_gauss" :  skimData["map"] = "surge"
         skimData["players"] = dict()
-        skimData["session_id"] = replaydata[0].split("\t")[1]["sessionid"]
+        firstFrame = json.loads(replaydata[0].split("\t")[1])
+        skimData["session_id"] = firstFrame["sessionid"]
         PlayerPosCache = dict()
 
         frameNumber = 0
