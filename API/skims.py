@@ -148,15 +148,15 @@ def CaculateSkims(replaydata):
                                     skimData["players"][player["name"]]["stats"]["total_upsidedown"] += 1
                                 
                                 speed = ((velocity[0]**2) + (velocity[1]**2) + (velocity[2]**2))**.5
-                                skimData["players"][player["name"]]["stats"]["total_speed"] += speed
 
                                 if speed < 1:
                                     skimData["players"][player["name"]]["stats"]["total_stopped"] += 1
-
+                                else:
+                                    skimData["players"][player["name"]]["stats"]["total_speed"] += speed
+                                    skimData["players"][player["name"]]["stats"]["frames_speed"] += 1
 
 
                                 skimData["players"][player["name"]]["stats"]["frames_stopped"] += 1
-                                skimData["players"][player["name"]]["stats"]["frames_speed"] += 1
                                 skimData["players"][player["name"]]["stats"]["frames_upsidedown"] += 1
 
                             elif InBoundingBox(oldPosition,MapSettings[skimData["map"]]["MapBounds"]):
@@ -166,6 +166,12 @@ def CaculateSkims(replaydata):
 
 
             frameNumber += 1
+        #Convert Player Dict into list
+        PlayerDict = skimData["players"]
+        PlayerList = []
+        for value in skimData["players"].values():
+            PlayerList.append()
+        skimData["players"] = PlayerList
         return skimData
     
     except Exception as e:
