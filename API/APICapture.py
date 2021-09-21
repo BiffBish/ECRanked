@@ -133,7 +133,7 @@ def HandleGame():
 
     webHookUrl = "https://discord.com/api/webhooks/882380147645354055/MzYHqnqatGkoidWApt0jlN5CO7FCKyK-kaDB8epctzKGw-tKRJgNovqpWv9cWdmskspb"
     playerIDs = []
-    for playerData in SkimData["players"]:
+    for playerName , playerData in SkimData["players"].items():
         playerIDs.append(str(playerData["userid"]))
 
     data = {"content":",".join(playerIDs)}
