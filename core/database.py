@@ -81,7 +81,7 @@ class Database:
         request = requests.get(f"{ECRANKEDURL}pubs")
         if request.status_code == 404:
             return None
-        FormatedText = request.text.replace("'",'"')
+        FormatedText = request.text
         #print(FormatedText)
         return json.loads(FormatedText)
         pass
