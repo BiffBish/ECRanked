@@ -72,9 +72,7 @@ class Database:
         #await ctx.send(request.text)
         if request.status_code == 404:
             return None
-        FormatedText = request.text.replace("'",'"')
-        FormatedText = FormatedText.replace(": None",": null")
-        print(FormatedText+"|")
+        FormatedText = request.text.replace(": None",": null")
         return json.loads(FormatedText)
        
     def get_pubs_list(self):
