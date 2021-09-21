@@ -78,7 +78,7 @@ class Database:
         return json.loads(FormatedText)
        
     def get_pubs_list(self):
-        request = requests.get(f"{ECRANKEDURL}pubs?key={APIKEY}")
+        request = requests.get(f"{ECRANKEDURL}pubs")
         if request.status_code == 404:
             return None
         FormatedText = request.text.replace("'",'"')
