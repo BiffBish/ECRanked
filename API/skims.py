@@ -21,21 +21,30 @@ MapSettings["fission"] = {
 
 loadoutTable = {
     "0xC8C33E4832761FBC" : 0, #-- Repair Matrix
-    "0x41D2D4381430080C" : 1,#-- Threat Scanner
-    "0x41D2D43513260B1A" : 2,#-- Enery Barrier
-    "0x41D2D02F1B2A1316" : 3,#-- Phase Shift
-
+    "0x41D2D4381430080C" : 1, #-- Threat Scanner
+    "0x41D2D43513260B1A" : 2, #-- Energy Barrier
+    "0x41D2D02F1B2A1316" : 3, #-- Phase Shift
+    "heal": 0,
+    "sensor": 1,
+    "shield": 2,
+    "wraith": 3,
     "0xC8E8D0B1A894E7FE" : 0, #-- Detonator
-    "0xC8C33E4829670BBE" : 4,#-- Stun Field
-    "0xC8E8D0B1A891F0E9" : 8,#-- Arc Mine
+    "0xC8C33E4829670BBE" : 4, #-- Stun Field
+    "0xC8E8D0B1A891F0E9" : 8, #-- Arc Mine
     "0xE32DC7D8CC9D57A4" : 12,#-- Instant Repair
-
+    "det":0,
+    "stun":4,
+    "arc":8,
+    "burst":12,
     "0x2FD69C8C5F615B9E" : 0, #-- Pulsar
     "0x2FD5839E4D605298" : 16,#-- Nova
     "0xE32DC7C9DA8051A4" : 32,#-- Comet
     "0x41D2D5321928020A" : 48,#-- Meteor
+    "assault":0,
+    "blaster":16,
+    "scout":32,
+    "rocket":48,
 }
-
 def InBoundingBox(position,Box):
     if position[0] < Box[0]:
         return False
@@ -54,7 +63,6 @@ def CaculateSkims(replaydata):
         endTime =  replaydata[-2].split("\t")[0]
         skimData["start_time"] = startTime[:-4]
         skimData["end_time"] = endTime[:-4]
-
         print (replaydata[0].split("\t")[0][:-4])
         matchLength = datetime.strptime(endTime.replace("/","-"),"%Y-%m-%d %H:%M:%S.%f") - datetime.strptime(startTime.replace("/","-"),"%Y-%m-%d %H:%M:%S.%f")
         skimData["match_length"] = matchLength.seconds
@@ -65,9 +73,9 @@ def CaculateSkims(replaydata):
         if rawMapName == "mpl_combat_fission" :  skimData["map"] = "fission"
         if rawMapName == "mpl_combat_gauss" :  skimData["map"] = "surge"
         skimData["players"] = dict()
-        firstFrame = json.loads(replaydata[0].split("\t")[1])
-        skimData["session_id"] = firstFrame["sessionid"]
         PlayerPosCache = dict()
+
+        PlayerLoadoutCache = dict()
 
         frameNumber = 0
         for frame in replaydata:
@@ -92,6 +100,7 @@ def CaculateSkims(replaydata):
                                 playerData["userid"] = player["userid"]
                                 playerData["number"] = player["number"]
                                 playerData["level"] = player["level"]
+                                playerData["crashed"] = False
                                 playerData["startFrame"] = frameNumber
                                 playerData["stats"] = dict()
                                 playerData["stats"]["total_frames"] = 0
@@ -112,31 +121,23 @@ def CaculateSkims(replaydata):
                                     loadoutDict[i] = 0
                                 playerData["stats"]["loadout"] = loadoutDict
                                 playerData["stats"]["frames_loadout"] = 0
+
+
+
+                                playerData["framestamps"] = dict()
+                                playerData["framestamps"]["loadout"] = list()
+                                playerData["framestamps"]["deaths"] = list()
+                                playerData["framestamps"]["respawns"] = list()
+
                                 skimData["players"][player["name"]] = playerData
+
+
 
                             playerPosition = player["head"]["position"]
                             playerHeadRotationUp = player["head"]["up"]
                             velocity = player["velocity"]
                             skimData["players"][player["name"]]["stats"]["total_frames"] += 1
                             skimData["players"][player["name"]]["stats"]["total_ping"] += player["ping"]
-
-                            if "Weapon" in player:
-                                Weapon = player["Weapon"]
-                                TechMod = player["Ability"]
-                                Grenade = player["Grenade"]
-
-
-                                LoadoutNumber = 0
-
-                                if Weapon in loadoutTable:
-                                    LoadoutNumber+= loadoutTable[Weapon]
-                                if Grenade in loadoutTable:
-                                    LoadoutNumber+= loadoutTable[Grenade]
-                                if TechMod in loadoutTable:
-                                    LoadoutNumber+= loadoutTable[TechMod]
-
-                                skimData["players"][player["name"]]["stats"]["loadout"][LoadoutNumber] += 1
-                                skimData["players"][player["name"]]["stats"]["frames_loadout"] += 1
 
 
 
@@ -146,7 +147,12 @@ def CaculateSkims(replaydata):
 
                             oldPosition = PlayerPosCache[player["name"]]
 
+                            ##IF YOUR IN THE MAP BOUNDS
                             if InBoundingBox(currentPosition,MapSettings[skimData["map"]]["MapBounds"]):
+                                ## GOING INTO THE MAP
+                                if not InBoundingBox(oldPosition,MapSettings[skimData["map"]]["MapBounds"]):
+                                    skimData["players"][player["name"]]["framestamps"]["respawns"].append(frameNumber)
+
                                 if playerBodyRotation[1] < 0:
                                     skimData["players"][player["name"]]["stats"]["total_upsidedown"] += 1
                                 
@@ -162,8 +168,35 @@ def CaculateSkims(replaydata):
                                 skimData["players"][player["name"]]["stats"]["frames_stopped"] += 1
                                 skimData["players"][player["name"]]["stats"]["frames_upsidedown"] += 1
 
+                                if "Weapon" in player:
+                                    Weapon = player["Weapon"]
+                                    TechMod = player["Ability"]
+                                    Grenade = player["Grenade"]
+
+
+                                    LoadoutNumber = 0
+
+                                    if Weapon in loadoutTable:
+                                        LoadoutNumber+= loadoutTable[Weapon]
+                                    if Grenade in loadoutTable:
+                                        LoadoutNumber+= loadoutTable[Grenade]
+                                    if TechMod in loadoutTable:
+                                        LoadoutNumber+= loadoutTable[TechMod]
+                                    if player["name"] not in PlayerLoadoutCache:
+                                        PlayerLoadoutCache[player["name"]] = LoadoutNumber
+                                        skimData["players"][player["name"]]["framestamps"]["loadout"].append([frameNumber,LoadoutNumber])
+
+                                    if LoadoutNumber != PlayerLoadoutCache[player["name"]]:
+
+                                        PlayerLoadoutCache[player["name"]] = LoadoutNumber
+                                        skimData["players"][player["name"]]["framestamps"]["loadout"].append([frameNumber,LoadoutNumber])
+                                    skimData["players"][player["name"]]["stats"]["loadout"][LoadoutNumber] += 1
+                                    skimData["players"][player["name"]]["stats"]["frames_loadout"] += 1
+
                             elif InBoundingBox(oldPosition,MapSettings[skimData["map"]]["MapBounds"]):
                                 skimData["players"][player["name"]]["stats"]["total_deaths"] += 1
+                                skimData["players"][player["name"]]["framestamps"]["deaths"].append(frameNumber)
+
 
                             PlayerPosCache[player["name"]] = currentPosition
 
@@ -173,10 +206,21 @@ def CaculateSkims(replaydata):
         PlayerDict = skimData["players"]
         PlayerList = []
         for value in skimData["players"].values():
+            ## CACULATE CRASHES
+
+            endingFrames = skimData["frames"] - (45 * skimData["framerate"])
+            if value["startFrame"] + value["stats"]["total_frames"] < endingFrames:
+                value["crashed"] = True
+
             PlayerList.append(value)
         skimData["players"] = PlayerList
+
+
+
+
+        
         return skimData
     
     except Exception as e:
-        return {"error":str(e)}
+        return {"error":traceback.format_exc()}
     
