@@ -169,10 +169,14 @@ def CaculateSkims(replaydata):
                                 skimData["players"][player["name"]]["stats"]["frames_upsidedown"] += 1
 
                                 if "Weapon" in player:
-                                    Weapon = player["Weapon"]
-                                    TechMod = player["Ability"]
-                                    Grenade = player["Grenade"]
-
+                                    if "Ability" in player:
+                                        Weapon = player["Weapon"]
+                                        TechMod = player["Ability"]
+                                        Grenade = player["Grenade"]
+                                    else:
+                                        Weapon = player["Weapon"]
+                                        TechMod = player["TacMod"]
+                                        Grenade = player["Ordnance"]
 
                                     LoadoutNumber = 0
 
