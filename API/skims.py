@@ -66,11 +66,11 @@ def CaculateSkims(replaydata):
         startTime =  replaydata[0].split("\t")[0]
         endTime =  replaydata[-2].split("\t")[0]
 
-        dt = datetime.strptime(startTime[:19], '%Y-%m-%d %H:%M:%S')
+        dt = datetime.strptime(startTime[:19].replace("/","-"), '%Y-%m-%d %H:%M:%S')
         tz = pytz.timezone('Europe/London')
         loc_dt = tz.localize(dt)        
         skimData["start_time"] = int(loc_dt.timestamp())
-        dt = datetime.strptime(endTime[:19], '%Y-%m-%d %H:%M:%S')
+        dt = datetime.strptime(endTime[:19].replace("/","-"), '%Y-%m-%d %H:%M:%S')
         tz = pytz.timezone('Europe/London')
         loc_dt = tz.localize(dt)        
         skimData["end_time"] = int(loc_dt.timestamp())
