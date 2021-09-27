@@ -139,6 +139,7 @@ def CaculateSkims(replaydata):
                                 playerData["framestamps"]["loadout"] = list()
                                 playerData["framestamps"]["deaths"] = list()
                                 playerData["framestamps"]["respawns"] = list()
+                                playerData["framestamps"]["in_bounds"] = list()
 
                                 skimData["players"][player["name"]] = playerData
 
