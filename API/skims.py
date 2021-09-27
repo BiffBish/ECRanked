@@ -1,6 +1,8 @@
 import json
 import traceback
 from datetime import datetime
+from datetime import timedelta
+import pytz
 MapSettings = dict()
 MapSettings["dyson"] = {
     "MapBounds":[-100,100,-40,40],
@@ -57,14 +59,23 @@ def InBoundingBox(position,Box):
     return True 
 def CaculateSkims(replaydata):
     try:
+        TimeFormat = "%Y-%m-%d %H:%M:%S.%f"
+        TimeFormatS = "%Y-%m-%d %H:%M:%S"
         skimData = dict()
         skimData["frames"] = len(replaydata)-1
         startTime =  replaydata[0].split("\t")[0]
         endTime =  replaydata[-2].split("\t")[0]
-        skimData["start_time"] = startTime[:-4]
-        skimData["end_time"] = endTime[:-4]
-        print (replaydata[0].split("\t")[0][:-4])
-        matchLength = datetime.strptime(endTime.replace("/","-"),"%Y-%m-%d %H:%M:%S.%f") - datetime.strptime(startTime.replace("/","-"),"%Y-%m-%d %H:%M:%S.%f")
+
+        dt = datetime.strptime(startTime[:19], '%Y-%m-%d %H:%M:%S')
+        tz = pytz.timezone('Europe/London')
+        loc_dt = tz.localize(dt)        
+        skimData["start_time"] = int(loc_dt.timestamp())
+        dt = datetime.strptime(endTime[:19], '%Y-%m-%d %H:%M:%S')
+        tz = pytz.timezone('Europe/London')
+        loc_dt = tz.localize(dt)        
+        skimData["end_time"] = int(loc_dt.timestamp())
+        
+        matchLength = datetime.strptime(endTime.replace("/","-"),TimeFormat) - datetime.strptime(startTime.replace("/","-"),TimeFormat)
         skimData["match_length"] = matchLength.seconds
         skimData["framerate"] = (skimData["frames"]/skimData["match_length"])
         rawMapName = json.loads(replaydata[0].split("\t")[1])["map_name"]
@@ -151,7 +162,8 @@ def CaculateSkims(replaydata):
                             if InBoundingBox(currentPosition,MapSettings[skimData["map"]]["MapBounds"]):
                                 ## GOING INTO THE MAP
                                 if not InBoundingBox(oldPosition,MapSettings[skimData["map"]]["MapBounds"]):
-                                    skimData["players"][player["name"]]["framestamps"]["respawns"].append(frameNumber)
+                                    skimData["players"][player["name"]]["framestamps"]["in_bounds"].append([frameNumber,True])
+
 
                                 if playerBodyRotation[1] < 0:
                                     skimData["players"][player["name"]]["stats"]["total_upsidedown"] += 1
@@ -169,10 +181,14 @@ def CaculateSkims(replaydata):
                                 skimData["players"][player["name"]]["stats"]["frames_upsidedown"] += 1
 
                                 if "Weapon" in player:
-                                    Weapon = player["Weapon"]
-                                    TechMod = player["Ability"]
-                                    Grenade = player["Grenade"]
-
+                                    if "Ability" in player:
+                                        Weapon = player["Weapon"]
+                                        TechMod = player["Ability"]
+                                        Grenade = player["Grenade"]
+                                    else:
+                                        Weapon = player["Weapon"]
+                                        TechMod = player["TacMod"]
+                                        Grenade = player["Ordnance"]
 
                                     LoadoutNumber = 0
 
@@ -196,6 +212,8 @@ def CaculateSkims(replaydata):
                             elif InBoundingBox(oldPosition,MapSettings[skimData["map"]]["MapBounds"]):
                                 skimData["players"][player["name"]]["stats"]["total_deaths"] += 1
                                 skimData["players"][player["name"]]["framestamps"]["deaths"].append(frameNumber)
+                                skimData["players"][player["name"]]["framestamps"]["in_bounds"].append([frameNumber,False])
+
 
 
                             PlayerPosCache[player["name"]] = currentPosition
