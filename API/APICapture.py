@@ -14,10 +14,12 @@ import glob
 import os
 import requests
 import psutil
-
+import aiohttp
+import asyncio
+import threading
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
-SkimFilePath = "E:/ECRanked/Skims"
-ReplayFilePath = "E:/ECRanked/Replays"
+SkimFilePath = "C:/Users/kaleb/DiscordBots/ECRanked/API/Skims"
+ReplayFilePath = "C:/Users/kaleb/DiscordBots/ECRanked/API/Replays"
 
 def process_exists(process_name):
     call = 'TASKLIST', '/FI', 'imagename eq %s' % process_name
@@ -30,14 +32,14 @@ def process_exists(process_name):
 
 
 CrashGameID = ""
-def HandleGame():
-    r = requests.get('http://127.0.0.1:6721/session')
+async def HandleGame(session):
+    r = await session.get('http://127.0.0.1:6721/session')
     startingTime = time.time() 
     t=time.time()
     CurrentGame = dict()
     FrameCount = 0
     ActivePlayerList = dict()
-    jsonData = r.json()
+    jsonData = await r.json()
     SessionID = jsonData['sessionid']
     #Game just starting up
     print("GAME STARTED")
@@ -53,34 +55,56 @@ def HandleGame():
     with open(f"{SessionID}.echoreplay","a+") as currentGametxt:
         CrashGameID = ""     
         r = None
+        running = False
         while True:
             try:
-                r = requests.get('http://127.0.0.1:6721/session')
+                thread_return={"session": None,"player_bones":None}
+                
+                from threading import Thread
+                def task(thread_return,url,value):
+                    req = requests.get(url)
+                    thread_return[value] = {"text":req.text,"status":req.status_code}
+                    
+                sessionThread = Thread(target=task, args=(thread_return,'http://127.0.0.1:6721/session',"session",))
+                bonesThread = Thread(target=task, args=(thread_return,'http://127.0.0.1:6721/player_bones',"player_bones",))
+                
+                sessionThread.start()
+                bonesThread.start()
 
-                if r.status_code == 404:
+                sessionThread.join()
+                bonesThread.join()
+
+                # r = await session.get('http://127.0.0.1:6721/session')
+                # boneData = await session.get('http://127.0.0.1:6721/player_bones')
+
+                if thread_return["session"]["status"] == 404:
+                    running = False
                     print(f"Game Finish! {jsonData['sessionid']}")    
                     break
 
                 if CrashGameID != "":
-                    jsonData = r.json()
-                    if CrashGameID != jsonData["sessionid"]:
-                        print(f"Game Crash Finish! {jsonData['sessionid']}")    
-                        break
-                    else:
-                        currentGametxt.write("\n")
-                        CrashGameID = ""
+                    if running == False:
+                        jsonData = await r.json()
+                        if CrashGameID != jsonData["sessionid"]:
+                            print(f"Game Crash Finish! {jsonData['sessionid']}")    
+                            break
+                    running = True
+                    currentGametxt.write("\n")
+                    CrashGameID = ""
                 nowTime = datetime.now()
                 #During entire game
                 FrameCount += 1
                 t += 1/framerate
 
-                time.sleep(max(0,t-time.time()))  
             
-                currentGametxt.write(f"{nowTime}\t{r.text}\n")
+                currentGametxt.write(f"{nowTime}\t{thread_return['session']['text']}\t{thread_return['player_bones']['text']}\n")
                 print(f"Capturing Frame! [{FrameCount}] ({nowTime})")
+                time.sleep(max(0,t-time.time()))  
             except Exception as e: 
-                jsonData = r.json()
+                print(e)
                 traceback.print_exc()
+                running = False
+                jsonData = await r.json()
                 print("Game Crash!")
                 CrashGameID = jsonData["sessionid"]
                 print("Waiting 5s")
@@ -138,47 +162,50 @@ def HandleGame():
 
     data = {"content":",".join(playerIDs)}
     requests.post(webHookUrl,data= data)
- 
 
-TimerToRestart = 60
-while True:
-    try:
-        r = requests.get('http://127.0.0.1:6721/session')
-        if r.status_code == 200:
-            TimerToRestart = 60
-            HandleGame()
-        else:
-            print(f"Got 200:{TimerToRestart}")
-            time.sleep(10)
-            TimerToRestart -= 1
-            if TimerToRestart <= 0 :
-                print("Restarting Echo VR")
+async def main():
+    async with aiohttp.ClientSession() as session:
+        TimerToRestart = 60
+        while True:
+            try:
+                r = requests.get('http://127.0.0.1:6721/session')
+                if r.status_code == 200:
+                    TimerToRestart = 60
+                    await HandleGame(session)
+                else:
+                    print(f"Got 200:{TimerToRestart}")
+                    time.sleep(10)
+                    TimerToRestart -= 1
+                    if TimerToRestart <= 0 :
+                        print("Restarting Echo VR")
 
 
-                
-                print("Killing Echo VR")
-                PROCNAME = "echovr.exe"
-                for proc in psutil.process_iter():
-                    # check whether the process name matches
-                    if proc.name() == PROCNAME:
-                        proc.kill()
-                time.sleep(5)
-                print("Killing Bugfinder")
-                PROCNAME = "BsSndRpt64.exe"
-                for proc in psutil.process_iter():
-                    # check whether the process name matches
-                    if proc.name() == PROCNAME:
-                        proc.kill()
-                time.sleep(5)
-                print("rerunning Echo VR")
-                subprocess.Popen(['run.bat'])
-                print("Waiting")
+                        
+                        print("Killing Echo VR")
+                        PROCNAME = "echovr.exe"
+                        for proc in psutil.process_iter():
+                            # check whether the process name matches
+                            if proc.name() == PROCNAME:
+                                proc.kill()
+                        time.sleep(5)
+                        print("Killing Bugfinder")
+                        PROCNAME = "BsSndRpt64.exe"
+                        for proc in psutil.process_iter():
+                            # check whether the process name matches
+                            if proc.name() == PROCNAME:
+                                proc.kill()
+                        time.sleep(5)
+                        print("rerunning Echo VR")
+                        subprocess.Popen(['run.bat'])
+                        print("Waiting")
 
-                time.sleep(45)
-                TimerToRestart = 60
+                        time.sleep(45)
+                        TimerToRestart = 60
 
-    except:
-        traceback.print_exc()
-        if not process_exists("echovr.exe"):
-            subprocess.Popen(['run.bat'])
-        time.sleep(30)     
+            except:
+                traceback.print_exc()
+                if not process_exists("echovr.exe"):
+                    subprocess.Popen(['run.bat'])
+                time.sleep(30)     
+
+asyncio.run(main())
