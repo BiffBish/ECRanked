@@ -123,12 +123,11 @@ def HandleGame():
     SkimData["replay_link"] = echoReplayPath
     SkimData["skim_link"] = SkimLink
     SkimData["session_id"] = SessionID
-
-    Formdata = {
-            "key": "1a508f8b-1dd2-412c-aa4e-0eda0c4aa6fc",
-            "data" : json.dumps(SkimData)
+    Formdata = json.dumps(data)
+    header = {
+        "Authorization" :"Token 1a508f8b-1dd2-412c-aa4e-0eda0c4aa6fc"
     }
-    print(requests.post(f"http://localhost/save_skim.py",data=Formdata))
+    print(requests.post("http://localhost/save_skim.py",headers=header, data = Formdata))
     os.remove(f"{SessionID}.echoreplay")  
 
     webHookUrl = "https://discord.com/api/webhooks/882380147645354055/MzYHqnqatGkoidWApt0jlN5CO7FCKyK-kaDB8epctzKGw-tKRJgNovqpWv9cWdmskspb"

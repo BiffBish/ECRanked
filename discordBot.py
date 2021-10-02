@@ -188,8 +188,8 @@ if __name__ == '__main__':
         guild_ids = [779349159852769310]
         )
     async def _recaculate(ctx):
-        await ctx.send("Recaculating")
-        await PubRecaculation()
+        await ctx.send("Recaculating 2.0")
+        await PubRecaculation(ctx)
         #await EloRecaculation()
 
     @bot.slash.slash(
@@ -417,7 +417,7 @@ if __name__ == '__main__':
                 if discord_id:
                     await UpdatePlayerPubs(bot,discord_id,saved_name,totalGames)
 
-    async def PubRecaculation():
+    async def PubRecaculation(ctx):
         pubList = bot.database.get_pubs_list()
         for userId, userData in pubList.items():
             totalGames = userData["total_games"]
@@ -425,6 +425,7 @@ if __name__ == '__main__':
             saved_name = userData["discord_name"]
             if discord_id:
                 await UpdatePlayerPubs(bot,discord_id,saved_name,totalGames)
+                await ctx.send(userData["discord_name"])
 
    
 
