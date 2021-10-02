@@ -425,7 +425,7 @@ if __name__ == '__main__':
             saved_name = userData["discord_name"]
             if discord_id:
                 await UpdatePlayerPubs(bot,discord_id,saved_name,totalGames)
-                await ctx.send(userData["discord_name"])
+                #await ctx.send(userData["discord_name"])
 
    
 
