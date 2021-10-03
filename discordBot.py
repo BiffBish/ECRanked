@@ -342,17 +342,17 @@ if __name__ == '__main__':
                 embed.set_footer(text="Note: Information has only been collected since September 1st 2021")
                 await ctx.send(embed=embed)
                 return
-            
-            average_speed = playerData["average_speed"]
-            average_ping = playerData["average_ping"]
-            percent_stopped = playerData["percent_stopped"]*100
-            percent_upsidedown = playerData["percent_upsidedown"]*100
-            total_games = playerData["total_games"]
-            total_deaths = playerData["total_deaths"]
-            average_deaths = playerData["average_deaths"]
+            chosenStat = playerData["weekly_stats"]
+            average_speed = chosenStat["average_speed"]
+            average_ping = chosenStat["average_ping"]
+            percent_stopped = chosenStat["percent_stopped"]*100
+            percent_upsidedown = chosenStat["percent_upsidedown"]*100
+            total_games = chosenStat["total_games"]
+            total_deaths = chosenStat["total_deaths"]
+            average_deaths = chosenStat["average_deaths"]
             mainLoadoutStr = "No Loadout Data Available"
-            if playerData["top_loadout"] is not None:
-                mainLoadout = int(playerData["top_loadout"][0][0])
+            if chosenStat["top_loadout"] is not None:
+                mainLoadout = int(chosenStat["top_loadout"][0][0])
                 abilityNumber = int(mainLoadout % 4)
                 grenadeNumber = int(((mainLoadout - abilityNumber)% 16) / 4)
                 weaponNumber = int(((mainLoadout - (abilityNumber+grenadeNumber))% 64) / 16)
@@ -366,7 +366,7 @@ if __name__ == '__main__':
                 discord_pfp = playerData["discord_pfp"]
 
 
-            embed=discord.Embed(title=f"Combat Stats for `{name}`", description=f"For more stats visit [ECRanked.com](http://ecranked.com/user/{name}/stats)", color=0x00ffff)
+            embed=discord.Embed(title=f"Combat Stats from the last 7 days for `{name}`", description=f"For more stats visit [ECRanked.com](http://ecranked.com/user/{name}/stats)", color=0x00ffff)
             if discord_name != None:
                 embed.set_thumbnail(url=discord_pfp)
             embed.add_field(name="Games", value=f"{total_games}", inline=True)
