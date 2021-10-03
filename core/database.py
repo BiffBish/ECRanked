@@ -67,7 +67,7 @@ class Database:
         print(requests.post(LINKURL,data=Formdata))
     
     def get_player_info(self, oculus_name: int):
-        request = requests.get(f"{ECRANKEDURL}api/v1/{oculus_name}")
+        request = requests.get(f"{ECRANKEDURL}api/v1/user/{oculus_name}")
         #await ctx.send(request.status_code)
         #await ctx.send(request.text)
         if request.status_code == 404:
