@@ -2,7 +2,7 @@ TIMEOUT 1
 git fetch
 git pull
 
-cd C:\Users\admin\Documents\ECRanked\htdocs
+cd E:\ECRanked\htdocs
 git fetch
 git pull
 
