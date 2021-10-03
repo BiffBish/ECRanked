@@ -62,6 +62,7 @@ def CaculateSkims(replaydata):
         TimeFormat = "%Y-%m-%d %H:%M:%S.%f"
         TimeFormatS = "%Y-%m-%d %H:%M:%S"
         skimData = dict()
+        skimData["session_id"] = json.loads(replaydata[0].split("\t")[1])["session_id"]
         skimData["frames"] = len(replaydata)-1
         startTime =  replaydata[0].split("\t")[0]
         endTime =  replaydata[-2].split("\t")[0]
