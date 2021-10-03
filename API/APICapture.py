@@ -127,7 +127,7 @@ def HandleGame():
     header = {
         "Authorization" :"Token 1a508f8b-1dd2-412c-aa4e-0eda0c4aa6fc"
     }
-    print(requests.post("http://localhost/save_skim.py",headers=header, data = Formdata))
+    print(requests.post("http://localhost/save_skim.py",headers=header, json = Formdata))
     os.remove(f"{SessionID}.echoreplay")  
 
     webHookUrl = "https://discord.com/api/webhooks/882380147645354055/MzYHqnqatGkoidWApt0jlN5CO7FCKyK-kaDB8epctzKGw-tKRJgNovqpWv9cWdmskspb"

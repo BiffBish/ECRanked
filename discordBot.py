@@ -367,8 +367,8 @@ if __name__ == '__main__':
 
 
             embed=discord.Embed(title=f"Combat Stats from the last 7 days for `{name}`", description=f"For more stats visit [ECRanked.com](http://ecranked.com/user/{name}/stats)", color=0x00ffff)
-            if discord_name != None:
-                embed.set_thumbnail(url=discord_pfp)
+            # if discord_name != None:
+            #     embed.set_thumbnail(url=discord_pfp)
             embed.add_field(name="Games", value=f"{total_games}", inline=True)
             embed.add_field(name="Deaths", value=f"{total_deaths}", inline=True)
             embed.add_field(name="Avg Speed", value=f"{round(average_speed,2)}m/s", inline=True)
