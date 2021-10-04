@@ -342,7 +342,7 @@ if __name__ == '__main__':
                 embed.set_footer(text="Note: Information has only been collected since September 1st 2021")
                 await ctx.send(embed=embed)
                 return
-            chosenStat = playerData["weekly_stats"]
+            chosenStat = playerData["stats"]
             average_speed = chosenStat["average_speed"]
             average_ping = chosenStat["average_ping"]
             percent_stopped = chosenStat["percent_stopped"]*100
