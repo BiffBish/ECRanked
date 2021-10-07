@@ -96,7 +96,9 @@ if __name__ == '__main__':
         async def on_message(self, message):
             if message.channel.id == 882379875242106940:
                 print(message.content)
-                await NewPubGame(message.content.split(","))         
+                await NewPubGame(message.content.split(","))
+            if message.content == "j!e6":
+                await message.channel.send("Wrong bot ;). Ping <@301343234108424192> for more info")         
         
         async def on_start(self):
             print("Started")
@@ -366,7 +368,7 @@ if __name__ == '__main__':
                 discord_pfp = playerData["discord_pfp"]
 
 
-            embed=discord.Embed(title=f"Combat Stats from the last 7 days for `{name}`", description=f"For more stats visit [ECRanked.com](http://ecranked.com/user/{name}/stats)", color=0x00ffff)
+            embed=discord.Embed(title=f"Combat Stats for `{name}`", description=f"For more stats visit [ECRanked.com](http://ecranked.com/user/{name}/stats)", color=0x00ffff)
             # if discord_name != None:
             #     embed.set_thumbnail(url=discord_pfp)
             embed.add_field(name="Games", value=f"{total_games}", inline=True)
