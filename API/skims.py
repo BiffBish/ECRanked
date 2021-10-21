@@ -1,4 +1,6 @@
+#version 3.0
 import json
+from logging import error
 import traceback
 from datetime import datetime
 from datetime import timedelta
@@ -57,6 +59,9 @@ def InBoundingBox(position,Box):
     if position[2] > Box[3]:
         return False  
     return True 
+
+def GetSquaredDistance(position,position2):
+    return ((position[0] - position2[0])**2) +  ((position[1] - position2[1])**2)+  ((position[2] - position2[2])**2)
 def CaculateSkims(replaydata):
     try:
         TimeFormat = "%Y-%m-%d %H:%M:%S.%f"
@@ -89,139 +94,189 @@ def CaculateSkims(replaydata):
 
         PlayerLoadoutCache = dict()
 
-        frameNumber = 0
+        frameNumber = len(replaydata)
+        replaydata.reverse()
+        skipFrames = 0
         for frame in replaydata:
-            if frame != "":
-                frameDataRaw  = frame.split("\t")[1]
-                frameData = json.loads(frameDataRaw)
-                for TeamID in range(3):
-                    team = frameData["teams"][TeamID]
-                    if "players" in team:
-                        for player in team["players"]:
-                            #Generate the new player data
-                            if player["name"] not in PlayerPosCache:
-                                PlayerPosCache[player["name"]] = player["head"]["position"]
+            if skipFrames > 0:
+                skipFrames -= 1
+                frameNumber -= 1
+                continue
+            try:
+                if frame != "":
+                    frameDataRaw  = frame.split("\t")[1]
+                    frameData = json.loads(frameDataRaw)
+                    for TeamID in range(2):
+                        team = frameData["teams"][TeamID]
+                        if "players" in team:
+                            for player in team["players"]:
+                                #Generate the new player data
+                                if player["name"] not in PlayerPosCache:
+                                    PlayerPosCache[player["name"]] = player["head"]["position"]
 
 
 
-                            if player["name"] not in skimData["players"]:
-                                playerData = dict()
-                                playerData["team"] = TeamID
-                                playerData["playerid"] = player["playerid"]
-                                playerData["name"] = player["name"]
-                                playerData["userid"] = player["userid"]
-                                playerData["number"] = player["number"]
-                                playerData["level"] = player["level"]
-                                playerData["crashed"] = False
-                                playerData["startFrame"] = frameNumber
-                                playerData["stats"] = dict()
-                                playerData["stats"]["total_frames"] = 0
-                                playerData["stats"]["total_ping"] = 0
-                                
-                                playerData["stats"]["total_speed"] = 0
-                                playerData["stats"]["frames_speed"] = 0
+                                if player["name"] not in skimData["players"]:
+                                    playerData = dict()
+                                    playerData["team"] = TeamID
+                                    playerData["playerid"] = player["playerid"]
+                                    playerData["name"] = player["name"]
+                                    playerData["userid"] = player["userid"]
+                                    playerData["number"] = player["number"]
+                                    playerData["level"] = player["level"]
+                                    playerData["total_right"] = 0
+                                    playerData["total_left"] = 0
 
-                                playerData["stats"]["total_upsidedown"] = 0
-                                playerData["stats"]["frames_upsidedown"] = 0
+                                    playerData["crashed"] = False
+                                    playerData["startFrame"] = frameNumber
+                                    playerData["stats"] = dict()
+                                    playerData["stats"]["total_frames"] = 0
+                                    playerData["stats"]["total_ping"] = 0
+                                    
+                                    playerData["stats"]["total_speed"] = 0
+                                    playerData["stats"]["frames_speed"] = 0
 
-                                playerData["stats"]["total_stopped"] = 0
-                                playerData["stats"]["frames_stopped"] = 0
+                                    playerData["stats"]["total_upsidedown"] = 0
+                                    playerData["stats"]["frames_upsidedown"] = 0
 
-                                playerData["stats"]["total_deaths"] = 0
-                                loadoutDict = dict()
-                                for i in range(64):
-                                    loadoutDict[i] = 0
-                                playerData["stats"]["loadout"] = loadoutDict
-                                playerData["stats"]["frames_loadout"] = 0
+                                    playerData["stats"]["total_stopped"] = 0
+                                    playerData["stats"]["frames_stopped"] = 0
 
-
-
-                                playerData["framestamps"] = dict()
-                                playerData["framestamps"]["loadout"] = list()
-                                playerData["framestamps"]["deaths"] = list()
-                                playerData["framestamps"]["respawns"] = list()
-                                playerData["framestamps"]["in_bounds"] = list()
-
-                                skimData["players"][player["name"]] = playerData
+                                    playerData["stats"]["total_deaths"] = 0
+                                    loadoutDict = dict()
+                                    for i in range(64):
+                                        loadoutDict[i] = 0
+                                    playerData["stats"]["loadout"] = loadoutDict
+                                    playerData["stats"]["frames_loadout"] = 0
 
 
 
-                            playerPosition = player["head"]["position"]
-                            playerHeadRotationUp = player["head"]["up"]
-                            velocity = player["velocity"]
-                            skimData["players"][player["name"]]["stats"]["total_frames"] += 1
-                            skimData["players"][player["name"]]["stats"]["total_ping"] += player["ping"]
+                                    playerData["framestamps"] = dict()
+                                    playerData["framestamps"]["loadout"] = list()
+                                    playerData["framestamps"]["deaths"] = list()
+                                    playerData["framestamps"]["respawns"] = list()
+                                    playerData["framestamps"]["in_bounds"] = list()
+
+                                    skimData["players"][player["name"]] = playerData
+
+
+
+                                playerPosition = player["head"]["position"]
+                                playerHeadRotationUp = player["head"]["up"]
+                                velocity = player["velocity"]
+                               
+                                skimData["players"][player["name"]]["stats"]["total_frames"] += 1
+                                skimData["players"][player["name"]]["stats"]["total_ping"] += player["ping"]
 
 
 
 
-                            currentPosition = player["head"]["position"]
-                            playerBodyRotation = player["body"]["up"]
+                                currentPosition = player["head"]["position"]
+                                playerBodyRotation = player["body"]["up"]
 
-                            oldPosition = PlayerPosCache[player["name"]]
+                                oldPosition = PlayerPosCache[player["name"]]
 
-                            ##IF YOUR IN THE MAP BOUNDS
-                            if InBoundingBox(currentPosition,MapSettings[skimData["map"]]["MapBounds"]):
-                                ## GOING INTO THE MAP
-                                if not InBoundingBox(oldPosition,MapSettings[skimData["map"]]["MapBounds"]):
+                                ##IF YOUR IN THE MAP BOUNDS
+                                if InBoundingBox(currentPosition,MapSettings[skimData["map"]]["MapBounds"]):
+                                    ## GOING INTO THE MAP
+                                    if not InBoundingBox(oldPosition,MapSettings[skimData["map"]]["MapBounds"]):
+                                        skipFrames = 6 * skimData["framerate"]
+                                        skimData["players"][player["name"]]["stats"]["total_deaths"] += 1
+                                        skimData["players"][player["name"]]["framestamps"]["deaths"].append(frameNumber)
+                                        skimData["players"][player["name"]]["framestamps"]["in_bounds"].append([frameNumber,False])
+                                        
+
+
+                                    if playerBodyRotation[1] < 0:
+                                        skimData["players"][player["name"]]["stats"]["total_upsidedown"] += 1
+                                    
+                                    speed = ((velocity[0]**2) + (velocity[1]**2) + (velocity[2]**2))**.5
+                                    if (skimData["players"][player["name"]]["stats"]["top_speed"] > speed):
+                                        skimData["players"][player["name"]]["stats"]["top_speed"] = speed
+                                    if speed < 1:
+                                        skimData["players"][player["name"]]["stats"]["total_stopped"] += 1
+                                    else:
+                                        skimData["players"][player["name"]]["stats"]["total_speed"] += speed
+                                        skimData["players"][player["name"]]["stats"]["frames_speed"] += 1
+
+
+                                    skimData["players"][player["name"]]["stats"]["frames_stopped"] += 1
+                                    skimData["players"][player["name"]]["stats"]["frames_upsidedown"] += 1
+
+                                    if "Arm" in player:
+                                        if player["Arm"] == "Right":
+                                            skimData["players"][player["name"]]["stats"]["total_right"] += 1
+                                        else:
+                                            skimData["players"][player["name"]]["stats"]["total_left"] += 1
+                                    if "Weapon" in player:
+                                        if "Ability" in player:
+                                            Weapon = player["Weapon"]
+                                            TechMod = player["Ability"]
+                                            Grenade = player["Grenade"]
+                                        else:
+                                            Weapon = player["Weapon"]
+                                            TechMod = player["TacMod"]
+                                            Grenade = player["Ordnance"]
+
+                                        LoadoutNumber = 0
+
+                                        if Weapon in loadoutTable:
+                                            LoadoutNumber+= loadoutTable[Weapon]
+                                        if Grenade in loadoutTable:
+                                            LoadoutNumber+= loadoutTable[Grenade]
+                                        if TechMod in loadoutTable:
+                                            LoadoutNumber+= loadoutTable[TechMod]
+                                        if player["name"] not in PlayerLoadoutCache:
+                                            PlayerLoadoutCache[player["name"]] = LoadoutNumber
+                                            skimData["players"][player["name"]]["framestamps"]["loadout"].append([frameNumber,LoadoutNumber])
+
+                                        if LoadoutNumber != PlayerLoadoutCache[player["name"]]:
+
+                                            PlayerLoadoutCache[player["name"]] = LoadoutNumber
+                                            skimData["players"][player["name"]]["framestamps"]["loadout"].append([frameNumber,LoadoutNumber])
+                                        skimData["players"][player["name"]]["stats"]["loadout"][LoadoutNumber] += 1
+                                        skimData["players"][player["name"]]["stats"]["frames_loadout"] += 1
+
+
+                                    currentPosition
+                                    closeToTm8 = False
+                                    closeToEnemy = False
+
+                                    for otherplayer in team["players"]:
+                                        if player["name"] != otherplayer:
+                                            otherplayerPosition = otherplayer["head"]["position"]
+                                            distance = GetSquaredDistance(currentPosition,otherplayerPosition)
+                                            if distance < 1:
+                                                closeToTm8 = True
+                                                break
+
+
+                                    otherTeamID = 1 if TeamID == 0 else 0
+
+                                    for otherplayer in frameData["teams"][otherTeamID]["players"]:
+                                        otherplayerPosition = otherplayer["head"]["position"]
+                                        distance = GetSquaredDistance(currentPosition,otherplayerPosition)
+                                        if distance < 1:
+                                            closeToEnemy = True
+                                            break
+
+                                    if (closeToTm8):
+                                        skimData["players"][player["name"]]["stats"]["frames_close_mate"] += 1
+                                    if (closeToEnemy):
+                                        skimData["players"][player["name"]]["stats"]["frames_close_enemy"] += 1
+                                    skimData["players"][player["name"]]["stats"]["total_close_mate"] += 1
+                                    skimData["players"][player["name"]]["stats"]["total_close_enemy"] += 1
+
+                                elif InBoundingBox(oldPosition,MapSettings[skimData["map"]]["MapBounds"]):
                                     skimData["players"][player["name"]]["framestamps"]["in_bounds"].append([frameNumber,True])
 
 
-                                if playerBodyRotation[1] < 0:
-                                    skimData["players"][player["name"]]["stats"]["total_upsidedown"] += 1
-                                
-                                speed = ((velocity[0]**2) + (velocity[1]**2) + (velocity[2]**2))**.5
 
-                                if speed < 1:
-                                    skimData["players"][player["name"]]["stats"]["total_stopped"] += 1
-                                else:
-                                    skimData["players"][player["name"]]["stats"]["total_speed"] += speed
-                                    skimData["players"][player["name"]]["stats"]["frames_speed"] += 1
+                                PlayerPosCache[player["name"]] = currentPosition
+            except error as e:
+                pass
 
-
-                                skimData["players"][player["name"]]["stats"]["frames_stopped"] += 1
-                                skimData["players"][player["name"]]["stats"]["frames_upsidedown"] += 1
-
-                                if "Weapon" in player:
-                                    if "Ability" in player:
-                                        Weapon = player["Weapon"]
-                                        TechMod = player["Ability"]
-                                        Grenade = player["Grenade"]
-                                    else:
-                                        Weapon = player["Weapon"]
-                                        TechMod = player["TacMod"]
-                                        Grenade = player["Ordnance"]
-
-                                    LoadoutNumber = 0
-
-                                    if Weapon in loadoutTable:
-                                        LoadoutNumber+= loadoutTable[Weapon]
-                                    if Grenade in loadoutTable:
-                                        LoadoutNumber+= loadoutTable[Grenade]
-                                    if TechMod in loadoutTable:
-                                        LoadoutNumber+= loadoutTable[TechMod]
-                                    if player["name"] not in PlayerLoadoutCache:
-                                        PlayerLoadoutCache[player["name"]] = LoadoutNumber
-                                        skimData["players"][player["name"]]["framestamps"]["loadout"].append([frameNumber,LoadoutNumber])
-
-                                    if LoadoutNumber != PlayerLoadoutCache[player["name"]]:
-
-                                        PlayerLoadoutCache[player["name"]] = LoadoutNumber
-                                        skimData["players"][player["name"]]["framestamps"]["loadout"].append([frameNumber,LoadoutNumber])
-                                    skimData["players"][player["name"]]["stats"]["loadout"][LoadoutNumber] += 1
-                                    skimData["players"][player["name"]]["stats"]["frames_loadout"] += 1
-
-                            elif InBoundingBox(oldPosition,MapSettings[skimData["map"]]["MapBounds"]):
-                                skimData["players"][player["name"]]["stats"]["total_deaths"] += 1
-                                skimData["players"][player["name"]]["framestamps"]["deaths"].append(frameNumber)
-                                skimData["players"][player["name"]]["framestamps"]["in_bounds"].append([frameNumber,False])
-
-
-
-                            PlayerPosCache[player["name"]] = currentPosition
-
-
-            frameNumber += 1
+            frameNumber -= 1
         #Convert Player Dict into list
         PlayerDict = skimData["players"]
         PlayerList = []

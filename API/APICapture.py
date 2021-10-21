@@ -56,6 +56,7 @@ def HandleGame():
         while True:
             try:
                 r = requests.get('http://127.0.0.1:6721/session')
+                #bone = requests.get('http://127.0.0.1:6721/player_bones')
 
                 if r.status_code == 404:
                     print(f"Game Finish! {jsonData['sessionid']}")    
@@ -122,12 +123,15 @@ def HandleGame():
 
     SkimData["replay_link"] = echoReplayPath
     SkimData["skim_link"] = SkimLink
-    SkimData["session_id"] = SessionID
     Formdata = SkimData
     header = {
         "Authorization" :"Token 1a508f8b-1dd2-412c-aa4e-0eda0c4aa6fc"
     }
     print(requests.post("http://localhost/save_skim.py",headers=header, json = Formdata))
+    print(requests.post("http://localhost/api/v1/stat/alltime",headers=header, json = Formdata))
+    print(requests.post("http://localhost/api/v1/stat/weekly",headers=header, json = Formdata))
+    print(requests.post("http://localhost/api/v1/stat/daily",headers=header, json = Formdata))
+    print(requests.post("http://localhost/api/v1/stat/achieve",headers=header, json = Formdata))
     os.remove(f"{SessionID}.echoreplay")  
 
     webHookUrl = "https://discord.com/api/webhooks/882380147645354055/MzYHqnqatGkoidWApt0jlN5CO7FCKyK-kaDB8epctzKGw-tKRJgNovqpWv9cWdmskspb"
