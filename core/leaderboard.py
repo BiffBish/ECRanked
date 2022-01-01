@@ -5,8 +5,6 @@ from discord_components import Button ,ButtonStyle
 async def MainLeaderboard(bot):
     channel = await bot.fetch_channel(LEADERBOARD_CHANNEL_ID)
     History =  await channel.history(limit=3).flatten()
-    C1v1Message = History[2]
-    LrL1v1Message = History[1]
     PubsMessage = History[0]
 
     PubList = bot.database.get_pubs_list()
