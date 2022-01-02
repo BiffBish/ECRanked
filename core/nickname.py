@@ -5,9 +5,9 @@ async def UpdatePlayerPubs(bot,userID: int,saved_name,total_games,OnChange = Fal
 
     try:
         member = await bot.guild.fetch_member(userID)
-    except:
+    except Exception as E:
+        print(E)
         return
-    print("UpdatePlayerElo------------------:")
     #Exactly what they have set
     currentRawName = member.nick
     if member.nick is None:
