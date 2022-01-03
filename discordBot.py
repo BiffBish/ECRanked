@@ -149,19 +149,19 @@ if __name__ == '__main__':
 
 
    
-    @bot.slash.slash(
-        name="mapstats",
-        description="See general map statistics",
-        guild_ids=GUILD_IDS,
-    )
-    async def _mapstats(ctx):
-        await ctx.defer()
-        #await ctx.send(content = "updated")
-        await statistics.GameMapOverTime(bot.mapData)
-        f = discord.File("stats.png", filename="image.png")
-        e = discord.Embed()
-        e.set_image(url="attachment://image.png")
-        await ctx.send(file=f,embed=e)
+    # @bot.slash.slash(
+    #     name="mapstats",
+    #     description="See general map statistics",
+    #     guild_ids=GUILD_IDS,
+    # )
+    # async def _mapstats(ctx):
+    #     await ctx.defer()
+    #     #await ctx.send(content = "updated")
+    #     await statistics.GameMapOverTime(bot.mapData)
+    #     f = discord.File("stats.png", filename="image.png")
+    #     e = discord.Embed()
+    #     e.set_image(url="attachment://image.png")
+    #     await ctx.send(file=f,embed=e)
 
     @bot.slash.slash(
         name="shutdown",
@@ -421,11 +421,14 @@ if __name__ == '__main__':
 
     async def PubRecaculation(ctx):
         pubList = bot.database.get_pubs_list()
+        print(pubList)
         for userId, userData in pubList.items():
             totalGames = userData["total_games"]
             discord_id = userData["discord_id"]
             saved_name = userData["discord_name"]
             if discord_id:
+                print(f"{discord_id}  {saved_name} : {totalGames}")
+
                 await UpdatePlayerPubs(bot,discord_id,saved_name,totalGames)
                 #await ctx.send(userData["discord_name"])
 

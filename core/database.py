@@ -13,7 +13,7 @@ import json
 from data.config import APIKEY
 
 
-ECRANKEDURL = "http://localhost/"
+ECRANKEDURL = "http://ecranked.ddns.net/"
 
 LINKURL = f"{ECRANKEDURL}api/link.py"
 TOTALPUBSURL = f"{ECRANKEDURL}pubs"
@@ -64,7 +64,7 @@ class Database:
             "discord_id" : discord_id,
             "discord_name" : discord_name,
             }
-        print(requests.post(LINKURL,data=Formdata))
+        print(requests.post(f"{ECRANKEDURL}api/v1/user/{oculus_name}",data=Formdata,headers= { "Authorization" :  "Token "+APIKEY}))
     
     def get_player_info(self, oculus_name: int):
         request = requests.get(f"{ECRANKEDURL}api/v1/user/{oculus_name}")

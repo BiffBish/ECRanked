@@ -8,6 +8,7 @@ async def UpdatePlayerPubs(bot,userID: int,saved_name,total_games,OnChange = Fal
     except Exception as E:
         print(E)
         return
+    print(f"UpdatePlayerElo------------------:{total_games}")
     #Exactly what they have set
     currentRawName = member.nick
     if member.nick is None:
