@@ -14,6 +14,8 @@ from data.config import APIKEY
 
 
 ECRANKEDURL = "http://ecranked.ddns.net/"
+# ECRANKEDURL = "http://localhost/"
+
 
 LINKURL = f"{ECRANKEDURL}api/link.py"
 TOTALPUBSURL = f"{ECRANKEDURL}pubs"
@@ -59,12 +61,13 @@ class Database:
     async def link_discord_oculus(self,oculus_name,discord_id,discord_name):
         
         Formdata = {
-            "key": APIKEY,
-            "oculus_name" : oculus_name,
             "discord_id" : discord_id,
             "discord_name" : discord_name,
             }
-        print(requests.put(f"{ECRANKEDURL}api/v1/user/{oculus_name}",data=Formdata,headers= { "Authorization" :  "Token "+APIKEY}))
+        print(Formdata)
+        headers = { "Authorization" :  "Token "+APIKEY,"Content-Type": "application/json"}
+
+        print(requests.put(f"{ECRANKEDURL}api/v1/user/{oculus_name}",data=json.dumps(Formdata),headers=headers))
     
     def get_player_info(self, oculus_name: int):
         request = requests.get(f"{ECRANKEDURL}api/v1/user/{oculus_name}")
