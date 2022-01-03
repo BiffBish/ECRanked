@@ -46,7 +46,7 @@ class Database:
             "discord_id" : discord_id,
             "discord_name" : discord_name,
             }
-        print(requests.post(UPDATENICK,data=Formdata))
+        print(requests.put(UPDATENICK,data=Formdata))
     
     def set_about(self, user, about):
         Formdata = {
@@ -54,7 +54,7 @@ class Database:
             "oculus_name" : user,
             "about_string" : about,
             }
-        print(requests.post(UPDATEABOUT,data=Formdata))
+        print(requests.put(UPDATEABOUT,data=Formdata))
     
     async def link_discord_oculus(self,oculus_name,discord_id,discord_name):
         
@@ -64,7 +64,7 @@ class Database:
             "discord_id" : discord_id,
             "discord_name" : discord_name,
             }
-        print(requests.post(f"{ECRANKEDURL}api/v1/user/{oculus_name}",data=Formdata,headers= { "Authorization" :  "Token "+APIKEY}))
+        print(requests.put(f"{ECRANKEDURL}api/v1/user/{oculus_name}",data=Formdata,headers= { "Authorization" :  "Token "+APIKEY}))
     
     def get_player_info(self, oculus_name: int):
         request = requests.get(f"{ECRANKEDURL}api/v1/user/{oculus_name}")
