@@ -390,7 +390,7 @@ if __name__ == '__main__':
             
             if playerData["avatar"] is not None:
 
-                embed.set_author(url=playerData["avatar"])
+                embed.set_thumbnail(url=playerData["avatar"])
 
            
 
