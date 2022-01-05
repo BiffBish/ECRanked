@@ -61,7 +61,7 @@ class Database:
     async def link_discord_oculus(self,oculus_name,discord_id,discord_name):
         
         Formdata = {
-            "discord_id" : discord_id,
+            "discord_id" : str(discord_id),
             "discord_name" : discord_name,
             }
         print(Formdata)
