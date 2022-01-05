@@ -384,13 +384,15 @@ if __name__ == '__main__':
                     embed.add_field(name="About Me",value="No profile set, join echo combat longue and contact an ECR moderator to submit", inline=True)
                 else:
                     embed.add_field(name="About Me", value="No profile set, contact an <@&853058237157867541> to submit", inline=True)
-
+            else:
+                embed.add_field(name="About Me", value=playerData["about_string"], inline=True)
+            
+            
             if playerData["avatar"] is not None:
 
                 embed.set_author(url=playerData["avatar"])
 
-            else:
-                embed.add_field(name="About Me", value=playerData["about_string"], inline=True)
+           
 
 
             embed.set_footer(text="Note: Information has only been collected since September 1st 2021")
