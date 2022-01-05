@@ -385,6 +385,10 @@ if __name__ == '__main__':
                 else:
                     embed.add_field(name="About Me", value="No profile set, contact an <@&853058237157867541> to submit", inline=True)
 
+            if playerData["avatar"] is not None:
+
+                embed.set_thumbnail(playerData["avatar"])
+
             else:
                 embed.add_field(name="About Me", value=playerData["about_string"], inline=True)
 
