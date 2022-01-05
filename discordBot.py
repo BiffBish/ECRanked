@@ -387,7 +387,7 @@ if __name__ == '__main__':
 
             if playerData["avatar"] is not None:
 
-                embed.set_thumbnail(playerData["avatar"])
+                embed.set_thumbnail(url=playerData["avatar"])
 
             else:
                 embed.add_field(name="About Me", value=playerData["about_string"], inline=True)
