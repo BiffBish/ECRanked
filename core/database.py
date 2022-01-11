@@ -79,7 +79,8 @@ class Database:
         return json.loads(FormatedText)
        
     def get_pubs_list(self):
-        request = requests.get(f"{ECRANKEDURL}pubs")
+        headers = { "Authorization" :  "Token "+APIKEY,"Content-Type": "application/json"}
+        request = requests.get(f"{ECRANKEDURL}pubs",headers=headers)
         if request.status_code == 404:
             return None
         FormatedText = request.text

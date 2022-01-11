@@ -433,7 +433,7 @@ if __name__ == '__main__':
         role = ctx.guild.get_role(929521201896910898)
         pubList = bot.database.get_pubs_list()
         print(pubList)
-        for userId, userData in pubList.items():
+        for userData in pubList:
             
             totalGames = userData["total_games"]
             discord_id = userData["discord_id"]
