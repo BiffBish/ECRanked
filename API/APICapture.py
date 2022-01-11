@@ -129,6 +129,7 @@ def HandleGame():
     }
     print(requests.post("http://localhost/save_skim.py",headers=header, json = Formdata))
     print(requests.post("http://localhost/api/v1/stat/alltime",headers=header, json = Formdata))
+    print(requests.post("http://localhost/api/v1/stat/monthly_resetting",headers=header, json = Formdata))
     print(requests.post("http://localhost/api/v1/stat/weekly",headers=header, json = Formdata))
     print(requests.post("http://localhost/api/v1/stat/daily",headers=header, json = Formdata))
     print(requests.post("http://localhost/api/v1/stat/achieve",headers=header, json = Formdata))
