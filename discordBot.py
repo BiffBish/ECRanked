@@ -434,17 +434,20 @@ if __name__ == '__main__':
         pubList = bot.database.get_pubs_list()
         print(pubList)
         for userData in pubList:
-            
-            totalGames = userData["total_games"]
-            discord_id = userData["discord_id"]
-            saved_name = userData["discord_name"]
-            if discord_id:
-                print(f"{discord_id}  {saved_name} : {totalGames}")
+            try:
+                totalGames = userData["total_games"]
+                discord_id = userData["discord_id"]
+                saved_name = userData["discord_name"]
+                if discord_id:
+                    print(f"{discord_id}  {saved_name} : {totalGames}")
 
-                await UpdatePlayerPubs(bot,discord_id,saved_name,totalGames)
-                user = await guild.fetch_member(discord_id)
-                if (user!= None): 
-                    await user.add_roles(role)
+                    await UpdatePlayerPubs(bot,discord_id,saved_name,totalGames)
+                    user = await guild.fetch_member(discord_id)
+                    if (user!= None): 
+                        await user.add_roles(role)
+            except Exception as E:
+                await ctx.send(userData["oculus_name"]+": [<@"+userData["discord_id"]+"> <@!"+userData["discord_id"]+">] is unknown")
+                print(E)
 
                 #await ctx.send(userData["discord_name"])
 
