@@ -442,7 +442,7 @@ if __name__ == '__main__':
                 print(f"{discord_id}  {saved_name} : {totalGames}")
 
                 await UpdatePlayerPubs(bot,discord_id,saved_name,totalGames)
-                user = guild.fetch_member(discord_id)
+                user = await guild.fetch_member(discord_id)
                 if (user!= None): 
                     await user.add_roles(role)
 
