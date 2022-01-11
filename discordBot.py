@@ -242,6 +242,9 @@ if __name__ == '__main__':
         guild_ids=GUILD_IDS,
     )
     async def _link(ctx, user:discord.User, name):
+        role = ctx.guild.get_role(929521201896910898)
+        await user.add_roles(role)
+
         await bot.database.link_discord_oculus(name,user.id,user.name)
         await ctx.send("Oculus for \""+name+"\" Linked")
         pass
@@ -426,9 +429,12 @@ if __name__ == '__main__':
                     await UpdatePlayerPubs(bot,discord_id,saved_name,totalGames)
 
     async def PubRecaculation(ctx):
+        guild = ctx.guild # You can remove this if you don't need it for something other
+        role = ctx.guild.get_role(929521201896910898)
         pubList = bot.database.get_pubs_list()
         print(pubList)
         for userId, userData in pubList.items():
+            
             totalGames = userData["total_games"]
             discord_id = userData["discord_id"]
             saved_name = userData["discord_name"]
@@ -436,6 +442,10 @@ if __name__ == '__main__':
                 print(f"{discord_id}  {saved_name} : {totalGames}")
 
                 await UpdatePlayerPubs(bot,discord_id,saved_name,totalGames)
+                user = guild.fetch_member(discord_id)
+                if (user!= None): 
+                    await user.add_roles(role)
+
                 #await ctx.send(userData["discord_name"])
 
    
