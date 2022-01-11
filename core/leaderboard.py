@@ -10,7 +10,7 @@ async def MainLeaderboard(bot):
     PubList = bot.database.get_pubs_list()
 
     Players = list()
-    for key, item in PubList.items():
+    for item in PubList:
         Players.append(item)
     
     
