@@ -250,6 +250,30 @@ if __name__ == '__main__':
         pass
 
     @bot.slash.slash(
+        name="unlink",
+        description="Unlink a discord and oculus name",
+        default_permission=False,
+        permissions={
+                779349159852769310: [
+                create_permission(853058237157867541, SlashCommandPermissionType.ROLE, True)
+                ]
+            },
+        options=[
+            create_option(
+                name="name",
+                description="The Oculus username",
+                option_type=3,
+                required=True
+            )
+        ],
+        guild_ids=GUILD_IDS,
+    )
+    async def _unlink(ctx, name):
+        await bot.database.unlink_discord_oculus(name)
+        await ctx.send("Oculus for \""+name+"\" Unlinked")
+
+
+    @bot.slash.slash(
         name="setabout",
         description="Set an about string for a user",
         default_permission=False,
@@ -429,6 +453,7 @@ if __name__ == '__main__':
                     await UpdatePlayerPubs(bot,discord_id,saved_name,totalGames)
 
     async def PubRecaculation(ctx):
+        channel = ctx.channel
         guild = ctx.guild # You can remove this if you don't need it for something other
         role = ctx.guild.get_role(929521201896910898)
         pubList = bot.database.get_pubs_list()
@@ -446,7 +471,7 @@ if __name__ == '__main__':
                     if (user!= None): 
                         await user.add_roles(role)
             except Exception as E:
-                await ctx.send(userData["oculus_name"]+": [<@"+userData["discord_id"]+"> <@!"+userData["discord_id"]+">] is unknown")
+                await channel.send(userData["oculus_name"]+": [<@"+userData["discord_id"]+"> <@!"+userData["discord_id"]+">] is unknown")
                 print(E)
 
                 #await ctx.send(userData["discord_name"])

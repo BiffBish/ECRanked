@@ -69,6 +69,12 @@ class Database:
 
         print(requests.put(f"{ECRANKEDURL}api/v1/user/{oculus_name}",data=json.dumps(Formdata),headers=headers))
     
+    async def unlink_discord_oculus(self,oculus_name):
+        
+        headers = { "Authorization" :  "Token "+APIKEY,"Content-Type": "application/json"}
+
+        print(requests.put(f"{ECRANKEDURL}api/v1/user/{oculus_name}",data="{discord_id : null, discord_name : null}",headers=headers))
+    
     def get_player_info(self, oculus_name: int):
         request = requests.get(f"{ECRANKEDURL}api/v1/user/{oculus_name}")
         #await ctx.send(request.status_code)
