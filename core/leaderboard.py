@@ -11,7 +11,8 @@ async def MainLeaderboard(bot):
 
     Players = list()
     for item in PubList:
-        Players.append(item)
+        if(item["total_games"] is not None):
+            Players.append(item)
     
     
     ### PUBS LEADERBOARD  
