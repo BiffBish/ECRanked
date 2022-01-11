@@ -73,7 +73,7 @@ class Database:
         
         headers = { "Authorization" :  "Token "+APIKEY,"Content-Type": "application/json"}
 
-        print(requests.put(f"{ECRANKEDURL}api/v1/user/{oculus_name}",data="{discord_id : null, discord_name : null}",headers=headers))
+        print(requests.put(f"{ECRANKEDURL}api/v1/user/{oculus_name}",data='{ "discord_id" : null, "discord_name" : null }',headers=headers))
     
     def get_player_info(self, oculus_name: int):
         request = requests.get(f"{ECRANKEDURL}api/v1/user/{oculus_name}")
