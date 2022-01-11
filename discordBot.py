@@ -246,7 +246,7 @@ if __name__ == '__main__':
         await user.add_roles(role)
 
         await bot.database.link_discord_oculus(name,user.id,user.name)
-        await ctx.send("Oculus for \""+name+"\" Linked")
+        await ctx.send("Oculus for \""+name+"\" Linked\n"+user.mention+" Head over to https://ecranked.com/user/"+name+"/stats and login to view and customize your page!")
         pass
 
     @bot.slash.slash(
