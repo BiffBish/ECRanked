@@ -246,6 +246,7 @@ if __name__ == '__main__':
         await user.add_roles(role)
 
         await bot.database.link_discord_oculus(name,user.id,user.name)
+        await UpdatePlayerPubs(bot,user.id,user.name,0)
         await ctx.send("Oculus for \""+name+"\" Linked\n"+user.mention+" Head over to https://ecranked.com/user/"+name+"/stats and login to view and customize your page!")
         pass
 
@@ -444,11 +445,11 @@ if __name__ == '__main__':
  
     async def NewPubGame(ids):
         pubList = bot.database.get_pubs_list()
-        for id in ids:
-            if id in pubList:
-                totalGames = pubList[id]["total_games"]
-                discord_id = pubList[id]["discord_id"]
-                saved_name = pubList[id]["discord_name"]
+        for user in pubList:
+            if user["oculus_id"] in ids:
+                totalGames = user["total_games"]
+                discord_id = user["discord_id"]
+                saved_name = user["discord_name"]
                 if discord_id:
                     await UpdatePlayerPubs(bot,discord_id,saved_name,totalGames)
 
