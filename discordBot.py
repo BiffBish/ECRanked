@@ -450,7 +450,7 @@ if __name__ == '__main__':
         print(ids)
 
         for user in pubList:
-            if user["oculus_id"] in ids:
+            if str(user["oculus_id"]) in ids:
                 print("UPDATING ID" + user["oculus_id"])
                 totalGames = user["total_games"]
                 discord_id = user["discord_id"]
