@@ -89,7 +89,7 @@ if __name__ == '__main__':
             print(before, after)
             if before.nick != after.nick:
                 CleanName = re.match("^(?:.(?![\\[\\(\\{]))*",after.nick).group()
-                playerData = await self.database.get_player_info(before.id)
+                playerData = self.database.get_player_info(before.id)
                 if playerData is not None:
                     await UpdatePlayerPubs(bot,before.id,CleanName,playerData["monthly_resetting_stats"]["total_games"])        
             pass
@@ -447,6 +447,8 @@ if __name__ == '__main__':
     async def NewPubGame(ids):
         pubList = bot.database.get_pubs_list()
         print("NEW PUB GAME")
+        print(ids)
+
         for user in pubList:
             if user["oculus_id"] in ids:
                 print("UPDATING ID" + user["oculus_id"])
