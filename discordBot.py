@@ -86,11 +86,12 @@ if __name__ == '__main__':
                     )
                 
         async def member_update(self, before: discord.Member, after: discord.Member):
-            # print(before, after)
-            # if before.nick != after.nick:
-            #     CleanName = re.match("^(?:.(?![\\[\\(\\{]))*",after.nick).group()
-            #     await self.database.UpdatePlayerPubs(self, after.id,CleanName, OnChange=True)
-        
+            print(before, after)
+            if before.nick != after.nick:
+                CleanName = re.match("^(?:.(?![\\[\\(\\{]))*",after.nick).group()
+                playerData = await self.database.get_player_info(before.id)
+                if playerData is not None:
+                    await UpdatePlayerPubs(bot,before.id,CleanName,playerData["monthly_resetting_stats"]["total_games"])        
             pass
 
         async def on_message(self, message):
