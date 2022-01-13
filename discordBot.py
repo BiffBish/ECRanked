@@ -86,8 +86,8 @@ if __name__ == '__main__':
                     )
                 
         async def member_update(self, before: discord.Member, after: discord.Member):
-            print(before, after)
             if before.nick != after.nick:
+                print(before, after)
                 CleanName = re.match("^(?:.(?![\\[\\(\\{]))*",after.nick).group()
                 playerData = self.database.get_player_info(before.id)
                 if playerData is not None:
