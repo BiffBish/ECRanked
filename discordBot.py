@@ -446,8 +446,10 @@ if __name__ == '__main__':
  
     async def NewPubGame(ids):
         pubList = bot.database.get_pubs_list()
+        print("NEW PUB GAME")
         for user in pubList:
             if user["oculus_id"] in ids:
+                print("UPDATING ID" + user["oculus_id"])
                 totalGames = user["total_games"]
                 discord_id = user["discord_id"]
                 saved_name = user["discord_name"]
