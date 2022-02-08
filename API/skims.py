@@ -1,4 +1,4 @@
-#version 2021-01-04
+#version 2022-02-08 v2
 import json
 from logging import error
 import traceback
@@ -125,19 +125,26 @@ def CaculateSkims(replaydata):
 
                                     playerData["crashed"] = False
                                     playerData["startFrame"] = frameNumber
+
                                     playerData["stats"] = dict()
                                     playerData["stats"]["total_frames"] = 0
+
+
+
+                                    playerData["stats"]["frames_ping"] = 0
                                     playerData["stats"]["total_ping"] = 0
                                     
-                                    playerData["stats"]["total_speed"] = 0
                                     playerData["stats"]["frames_speed"] = 0
+                                    playerData["stats"]["total_speed"] = 0
 
-                                    playerData["stats"]["total_upsidedown"] = 0
+
                                     playerData["stats"]["frames_upsidedown"] = 0
+                                    playerData["stats"]["total_upsidedown"] = 0
 
 
-                                    playerData["stats"]["total_stopped"] = 0
+
                                     playerData["stats"]["frames_stopped"] = 0
+                                    playerData["stats"]["total_stopped"] = 0
 
 
                                     playerData["stats"]["top_speed"] = 0
@@ -145,17 +152,18 @@ def CaculateSkims(replaydata):
                                     playerData["stats"]["frames_left"] = 0
                                     playerData["stats"]["frames_right"] = 0
 
-                                    playerData["stats"]["total_close_mate"] = 0
-                                    playerData["stats"]["total_close_enemy"] = 0
                                     playerData["stats"]["frames_close_mate"] = 0
-                                    playerData["stats"]["frames_close_enemy"] = 0
+                                    playerData["stats"]["total_close_mate"] = 0
 
-                                    playerData["stats"]["total_deaths"] = 0
+                                    playerData["stats"]["frames_close_enemy"] = 0
+                                    playerData["stats"]["total_close_enemy"] = 0
+
+                                    playerData["stats"]["deaths"] = 0
                                     loadoutDict = dict()
                                     for i in range(64):
                                         loadoutDict[i] = 0
                                     playerData["stats"]["loadout"] = loadoutDict
-                                    playerData["stats"]["frames_loadout"] = 0
+                                    playerData["stats"]["total_loadout"] = 0
 
 
 
@@ -175,7 +183,8 @@ def CaculateSkims(replaydata):
 
                                 skimData["players"][player["name"]]["stats"]["total_frames"] += 1
 
-                                skimData["players"][player["name"]]["stats"]["total_ping"] += player["ping"]
+                                skimData["players"][player["name"]]["stats"]["frames_ping"] += player["ping"]
+                                skimData["players"][player["name"]]["stats"]["total_ping"] += 1
 
 
 
@@ -192,10 +201,13 @@ def CaculateSkims(replaydata):
                                     if not InBoundingBox(oldPosition,MapSettings[skimData["map"]]["MapBounds"]):
                                         skimData["players"][player["name"]]["framestamps"]["in_bounds"].append([frameNumber,True])
 
-                                        
+                                    ## Inverted Stuff
                                     if playerBodyRotation[1] < 0:
-                                        skimData["players"][player["name"]]["stats"]["total_upsidedown"] += 1
-                                    
+                                        skimData["players"][player["name"]]["stats"]["frames_upsidedown"] += 1
+                                    skimData["players"][player["name"]]["stats"]["total_upsidedown"] += 1
+
+
+
                                     speed = ((velocity[0]**2) + (velocity[1]**2) + (velocity[2]**2))**.5
                                     if (player["name"] not in frameSpeedBuffer):
                                         frameSpeedBuffer[player["name"]] = []
@@ -207,21 +219,27 @@ def CaculateSkims(replaydata):
 
                                     if (skimData["players"][player["name"]]["stats"]["top_speed"] < min(frameSpeedBuffer[player["name"]])):
                                         skimData["players"][player["name"]]["stats"]["top_speed"] = min(frameSpeedBuffer[player["name"]])
+                                    
+                                    
+                                    
                                     if speed < 1:
-                                        skimData["players"][player["name"]]["stats"]["total_stopped"] += 1
-                                    else:
-                                        skimData["players"][player["name"]]["stats"]["total_speed"] += speed
-                                        skimData["players"][player["name"]]["stats"]["frames_speed"] += 1
+                                        skimData["players"][player["name"]]["stats"]["frames_stopped"] += 1
+                                    skimData["players"][player["name"]]["stats"]["total_stopped"] += 1
+                                    
 
 
-                                    skimData["players"][player["name"]]["stats"]["frames_stopped"] += 1
-                                    skimData["players"][player["name"]]["stats"]["frames_upsidedown"] += 1
+
+                                    skimData["players"][player["name"]]["stats"]["frames_speed"] += speed
+                                    skimData["players"][player["name"]]["stats"]["total_speed"] += 1
+
+
 
                                     if "Arm" in player:
                                         if player["Arm"] == "Right":
                                             skimData["players"][player["name"]]["stats"]["frames_right"] += 1
                                         else:
                                             skimData["players"][player["name"]]["stats"]["frames_left"] += 1
+
                                     if "Weapon" in player:
                                         if "Ability" in player:
                                             Weapon = player["Weapon"]
@@ -249,7 +267,7 @@ def CaculateSkims(replaydata):
                                             PlayerLoadoutCache[player["name"]] = LoadoutNumber
                                             skimData["players"][player["name"]]["framestamps"]["loadout"].append([frameNumber,LoadoutNumber])
                                         skimData["players"][player["name"]]["stats"]["loadout"][LoadoutNumber] += 1
-                                        skimData["players"][player["name"]]["stats"]["frames_loadout"] += 1
+                                        skimData["players"][player["name"]]["stats"]["total_loadout"] += 1
 
 
                                     currentPosition
@@ -263,7 +281,10 @@ def CaculateSkims(replaydata):
                                             if distance < 1:
                                                 closeToTm8 = True
                                                 break
-
+                                    if (closeToTm8):
+                                        skimData["players"][player["name"]]["stats"]["frames_close_mate"] += 1
+                                    skimData["players"][player["name"]]["stats"]["total_close_mate"] += 1
+                                    
 
                                     otherTeamID = 1 if TeamID == 0 else 0
                                     if "players" in frameData["teams"][otherTeamID]:
@@ -272,17 +293,14 @@ def CaculateSkims(replaydata):
                                             distance = GetSquaredDistance(currentPosition,otherplayerPosition)
                                             if distance < 1:
                                                 closeToEnemy = True
-                                                break
-
-                                    if (closeToTm8):
-                                        skimData["players"][player["name"]]["stats"]["frames_close_mate"] += 1
+                                                break  
                                     if (closeToEnemy):
                                         skimData["players"][player["name"]]["stats"]["frames_close_enemy"] += 1
-                                    skimData["players"][player["name"]]["stats"]["total_close_mate"] += 1
                                     skimData["players"][player["name"]]["stats"]["total_close_enemy"] += 1
 
+
                                 elif InBoundingBox(oldPosition,MapSettings[skimData["map"]]["MapBounds"]):
-                                    skimData["players"][player["name"]]["stats"]["total_deaths"] += 1   
+                                    skimData["players"][player["name"]]["stats"]["deaths"] += 1   
                                     skimData["players"][player["name"]]["framestamps"]["deaths"].append(frameNumber)
                                     skimData["players"][player["name"]]["framestamps"]["in_bounds"].append([frameNumber,False])
 
