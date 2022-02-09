@@ -379,7 +379,7 @@ if __name__ == '__main__':
             percent_stopped = chosenStat["percent_stopped"]*100
             percent_upsidedown = chosenStat["percent_upsidedown"]*100
             total_games = chosenStat["total_games"]
-            total_deaths = chosenStat["total_deaths"]
+            total_deaths = chosenStat["deaths"]
             average_deaths = chosenStat["average_deaths"]
             mainLoadoutStr = "No Loadout Data Available"
             if chosenStat["top_loadout"] is not None:
