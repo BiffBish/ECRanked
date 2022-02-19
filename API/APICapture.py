@@ -1,3 +1,5 @@
+#2022 02 19
+import shutil
 import time
 from datetime import datetime , timedelta
 import json
@@ -38,7 +40,9 @@ def HandleGame():
     FrameCount = 0
     ActivePlayerList = dict()
     jsonData = r.json()
+    # jsonData = {"sessionid":"TestFile","map_name":"mpl_combat_dyson"}
     SessionID = jsonData['sessionid']
+    # SessionID = "TestSessionID"
     #Game just starting up
     print("GAME STARTED")
     print(f"SESSION ID = \"{SessionID}\"")
@@ -48,13 +52,15 @@ def HandleGame():
     if jsonData['map_name'] == "mpl_combat_combustion" : mapSaveLocation = "combustion" 
     if jsonData['map_name'] == "mpl_combat_fission" : mapSaveLocation = "fission" 
     if jsonData['map_name'] == "mpl_combat_gauss" : mapSaveLocation = "surge" 
-
-
-    with open(f"{SessionID}.echoreplay","a+") as currentGametxt:
+    if(not os.path.isdir(SessionID)):
+        os.mkdir(SessionID)
+    with open(f"{SessionID}/{SessionID}.echoreplay","a+") as currentGametxt:
+        # currentGametxt.write("Testing")
         CrashGameID = ""     
         r = None
         while True:
             try:
+                # break
                 r = requests.get('http://127.0.0.1:6721/session')
                 #bone = requests.get('http://127.0.0.1:6721/player_bones')
 
@@ -108,15 +114,17 @@ def HandleGame():
 
                 print("Waiting 10s")
                 time.sleep(10)
-                print("Done!")   
+                print("Done!")
+                pass   
 
     echoReplayPath = f"{ReplayFilePath}/{mapSaveLocation}/[{StartTimeSTR}] {SessionID}.echoreplay"
     zipObj = zipfile.ZipFile(echoReplayPath, 'w',compression=zipfile.ZIP_DEFLATED,compresslevel=9)
 
     # Add multiple files to the zip
-    zipObj.write(f"{SessionID}.echoreplay")
+    zipObj.write(f"{SessionID}/{SessionID}.echoreplay",f"{SessionID}.echoreplay")
+    zipObj.write(f"{SessionID}/{SessionID}.echoreplay","images\\image.png")
     zipObj.close()
-    SkimData = CaculateSkims(open(f"{SessionID}.echoreplay","r").read().split("\n"))
+    SkimData = CaculateSkims(open(f"{SessionID}/{SessionID}.echoreplay","r").read().split("\n"))
     SkimLink = f"{SkimFilePath}/{mapSaveLocation}/[{StartTimeSTR}] {SessionID}.ecrs"
     with open(SkimLink, 'w') as f:
         f.write(json.dumps(SkimData))
@@ -133,8 +141,7 @@ def HandleGame():
     print(requests.post("http://localhost/api/v1/stat/weekly",headers=header, json = Formdata))
     print(requests.post("http://localhost/api/v1/stat/daily",headers=header, json = Formdata))
     print(requests.post("http://localhost/api/v1/stat/achieve",headers=header, json = Formdata))
-    os.remove(f"{SessionID}.echoreplay")  
-
+    shutil.rmtree(SessionID)
     webHookUrl = "https://discord.com/api/webhooks/882380147645354055/MzYHqnqatGkoidWApt0jlN5CO7FCKyK-kaDB8epctzKGw-tKRJgNovqpWv9cWdmskspb"
     playerIDs = []
     for playerData in SkimData["players"]:
@@ -145,6 +152,8 @@ def HandleGame():
  
 
 TimerToRestart = 60
+# HandleGame()
+# quit()
 while True:
     try:
         r = requests.get('http://127.0.0.1:6721/session')
