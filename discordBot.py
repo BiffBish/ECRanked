@@ -4,7 +4,7 @@ from discord.flags import PublicUserFlags
 
 
 if __name__ == '__main__':
-    BotVersion = "2.6"
+    BotVersion = "2022.03.12"
     import asyncio
     import discord
     import traceback
@@ -25,11 +25,10 @@ if __name__ == '__main__':
 
     #from core.buttoncogs import ButtonCog
     from core.database import Database
-    from discord_slash_components import (
-        DiscordComponents
-    )
+    # from discord_slash_components import (
+    #     DiscordComponents
+    # )
 
-    from core import plot
 
     from core.nickname import UpdatePlayerPubs
 
@@ -37,16 +36,13 @@ if __name__ == '__main__':
     #from core.challenges.twovtwo import Challenge2v2
 
     # Importing the newly installed library.
-    from core.constants import GUILD_IDS , ACTIVE_GAMES_CHANNEL , GAME_CHANNEL_ID , LEADERBOARD_CHANNEL_ID , GAMEMODENAMES , LOG_CHANNEL_ID
+    from core.constants import GUILD_IDS
     
     from core.leaderboard import MainLeaderboard
 
     import subprocess
 
     import sys
-    import statistics
-    import os
-    import json
     import re
     initial_extensions = ["button_cogs.results"]
 
@@ -63,7 +59,7 @@ if __name__ == '__main__':
             self.buttons = {}
             super().__init__(*args, **kwargs)
             self.slash = SlashCommand(self, sync_commands=True)
-            DiscordComponents(self,self.slash)
+            # DiscordComponents(self,self.slash)
             self.add_listener(self.button_listener,"on_button_click")
             self.add_listener(self.member_update,"on_member_update")
             self.add_listener(self.on_start,"on_ready")
