@@ -9,33 +9,22 @@ if __name__ == '__main__':
     import discord
     import traceback
 
-    from datetime import datetime
     from discord.ext import commands , tasks
 
-    from discord_components.component import Component
-    from discord_components import InteractionType, Button, Select, SelectOption ,ButtonStyle
 
     from discord_slash import SlashCommand
-    from discord_slash.utils.manage_commands import create_permission , create_option, create_choice
+    from discord_slash.utils.manage_commands import create_permission , create_option
     from discord_slash.model import SlashCommandPermissionType
 
 
     from data.config import BOT_TOKEN
 
 
-    #from core.buttoncogs import ButtonCog
     from core.database import Database
-    # from discord_slash_components import (
-    #     DiscordComponents
-    # )
+    
 
 
     from core.nickname import UpdatePlayerPubs
-
-    #from core.challenges.user import challenge_user
-    #from core.challenges.twovtwo import Challenge2v2
-
-    # Importing the newly installed library.
     from core.constants import GUILD_IDS
     
     from core.leaderboard import MainLeaderboard
@@ -60,26 +49,12 @@ if __name__ == '__main__':
             super().__init__(*args, **kwargs)
             self.slash = SlashCommand(self, sync_commands=True)
             # DiscordComponents(self,self.slash)
-            self.add_listener(self.button_listener,"on_button_click")
             self.add_listener(self.member_update,"on_member_update")
             self.add_listener(self.on_start,"on_ready")
             self.C1v1SK = "elo0+"
             self.LRL1v1SK = "elo1+"
 
-        async def button_listener(self, res):
-            print(res)
-            print(res.message)
-            print(res.channel)
-            """Dispatch the button event."""
-            component_id = res.component.id
-            print(component_id)
-            for pattern, button in self.buttons.items():
-                result = pattern.fullmatch(component_id)
-                if result is not None:
-                    await button(res.user, res.message, **result.groupdict())
-                    await res.respond(
-                        type=InteractionType.UpdateMessage
-                    )
+        
                 
         async def member_update(self, before: discord.Member, after: discord.Member):
             if before.nick != after.nick:
