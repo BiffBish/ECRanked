@@ -80,7 +80,7 @@ if __name__ == '__main__':
             #await EloRecaculation()
             await MainLeaderboard(self)
             await StartupTask(self)
-            await PubRecaculation(ctx = None)
+            # await PubRecaculation(ctx = None)
         
         async def on_command_error(self, ctx, error):
             """The event triggered when an error is raised while invoking a command.
