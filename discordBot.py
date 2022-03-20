@@ -80,6 +80,7 @@ if __name__ == '__main__':
             #await EloRecaculation()
             await MainLeaderboard(self)
             await StartupTask(self)
+            await PubRecaculation(ctx = None)
         
         async def on_command_error(self, ctx, error):
             """The event triggered when an error is raised while invoking a command.
@@ -421,22 +422,25 @@ if __name__ == '__main__':
         for id in ids:
             playerData = bot.database.get_player_info(id)
             if playerData is not None:
-                await UpdatePlayerPubs(bot,playerData["discord_id"],playerData["discord_name"],playerData["monthly_resetting_stats"]["total_games"],playerData["achievements"]["80"])
+                await UpdatePlayerPubs(bot,id,playerData["discord_name"],playerData["monthly_resetting_stats"]["total_games"],playerData["achievements"]["80"])
  
 
     async def PubRecaculation(ctx):
-        channel = ctx.channel
+        channel = None
+        if ctx != None:
+            channel = ctx.channel
         pubList = bot.database.get_pubs_list()
         # print(pubList)
         for userData in pubList:
             try:
                 playerData = bot.database.get_player_info(userData["discord_id"])
                 if playerData is not None:
-                    await UpdatePlayerPubs(bot,playerData["discord_id"],playerData["discord_name"],playerData["monthly_resetting_stats"]["total_games"],playerData["achievements"]["80"])
+                    await UpdatePlayerPubs(bot,userData["discord_id"],playerData["discord_name"],playerData["monthly_resetting_stats"]["total_games"],playerData["achievements"]["80"])
  
             except Exception as E:
-                await channel.send(userData["oculus_name"]+": [<@"+userData["discord_id"]+"> <@!"+userData["discord_id"]+">] is unknown")
                 print(E)
+            if channel != None:
+                await channel.send(userData["oculus_name"]+": [<@"+userData["discord_id"]+"> <@!"+userData["discord_id"]+">] is unknown")
 
 
    

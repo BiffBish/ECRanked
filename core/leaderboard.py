@@ -57,7 +57,7 @@ async def MainLeaderboard(bot):
     StatStr += "```"
     PubEmbed=discord.Embed(title="Pubs Leaderboard!", description =StatStr,  color=0xff0000)
 
-    await PubsMessage.edit(content = "",embed=PubEmbed,components = [])
+    # await PubsMessage.edit(content = "",embed=PubEmbed,components = [])
 
     # #print(userStats)
     # games = bot.database.get_games_list()
