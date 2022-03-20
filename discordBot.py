@@ -62,7 +62,7 @@ if __name__ == '__main__':
                 CleanName = re.match("^(?:.(?![\\[\\(\\{]))*",after.nick).group()
                 playerData = self.database.get_player_info(before.id)
                 if playerData is not None:
-                    await UpdatePlayerPubs(bot,before.id,CleanName,playerData["monthly_resetting_stats"]["total_games"])        
+                    await UpdatePlayerPubs(bot,before.id,CleanName,playerData["monthly_resetting_stats"]["total_games"],playerData["achievements"]["80"])        
             pass
 
         async def on_message(self, message):
@@ -218,7 +218,7 @@ if __name__ == '__main__':
         await user.add_roles(role)
 
         await bot.database.link_discord_oculus(name,user.id,user.name)
-        await UpdatePlayerPubs(bot,user.id,user.name,0)
+        await UpdatePlayerPubs(bot,user.id,user.name,0,0)
         await ctx.send("Oculus for \""+name+"\" Linked\n"+user.mention+" Head over to https://ecranked.com/user/"+name+"/stats and login to view and customize your page!")
         pass
 
@@ -416,42 +416,28 @@ if __name__ == '__main__':
 
  
     async def NewPubGame(ids):
-        pubList = bot.database.get_pubs_list()
         print("NEW PUB GAME")
         print(ids)
-
-        for user in pubList:
-            if str(user["oculus_id"]) in ids:
-                # print("UPDATING ID" + user["oculus_id"])
-                totalGames = user["total_games"]
-                discord_id = user["discord_id"]
-                saved_name = user["discord_name"]
-                if discord_id:
-                    await UpdatePlayerPubs(bot,discord_id,saved_name,totalGames)
+        for id in ids:
+            playerData = bot.database.get_player_info(id)
+            if playerData is not None:
+                await UpdatePlayerPubs(bot,playerData["discord_id"],playerData["discord_name"],playerData["monthly_resetting_stats"]["total_games"],playerData["achievements"]["80"])
+ 
 
     async def PubRecaculation(ctx):
         channel = ctx.channel
-        guild = ctx.guild # You can remove this if you don't need it for something other
-        role = ctx.guild.get_role(929521201896910898)
         pubList = bot.database.get_pubs_list()
         print(pubList)
         for userData in pubList:
             try:
-                totalGames = userData["total_games"]
-                discord_id = userData["discord_id"]
-                saved_name = userData["discord_name"]
-                if discord_id:
-                    print(f"{discord_id}  {saved_name} : {totalGames}")
-
-                    await UpdatePlayerPubs(bot,discord_id,saved_name,totalGames)
-                    user = await guild.fetch_member(discord_id)
-                    if (user!= None): 
-                        await user.add_roles(role)
+                playerData = bot.database.get_player_info(userData["discord_id"])
+                if playerData is not None:
+                    await UpdatePlayerPubs(bot,playerData["discord_id"],playerData["discord_name"],playerData["monthly_resetting_stats"]["total_games"],playerData["achievements"]["80"])
+ 
             except Exception as E:
                 await channel.send(userData["oculus_name"]+": [<@"+userData["discord_id"]+"> <@!"+userData["discord_id"]+">] is unknown")
                 print(E)
 
-                #await ctx.send(userData["discord_name"])
 
    
 

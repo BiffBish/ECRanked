@@ -1,7 +1,7 @@
 ﻿import discord
 import core.database
 import re
-async def UpdatePlayerPubs(bot,userID: int,saved_name,total_games,OnChange = False):
+async def UpdatePlayerPubs(bot,userID: int,saved_name,total_games,challenge_percentage = 0,OnChange = False):
 
     try:
         member = await bot.guild.fetch_member(userID)
@@ -23,6 +23,7 @@ async def UpdatePlayerPubs(bot,userID: int,saved_name,total_games,OnChange = Fal
         if currentCleanName != saved_name:
             bot.database.set_player_nick(member.id,currentCleanName)
 
+        newName = f'{currentCleanName} ({total_games}) [{round(challenge_percentage*100,2)}%]'
 
         newName = f'{currentCleanName} ({total_games})'
         
@@ -37,7 +38,7 @@ async def UpdatePlayerPubs(bot,userID: int,saved_name,total_games,OnChange = Fal
     else:
         if currentCleanName != saved_name:
             bot.database.set_player_nick(member.id,currentCleanName)
-        newName = f'{currentCleanName} ({total_games})'
+        newName = f'{currentCleanName} ({total_games}) [{round(challenge_percentage*100,2)}%]'
         if newName != currentRawName and len(newName)<=32:
             try:
                 print("Set")
