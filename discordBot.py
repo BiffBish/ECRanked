@@ -427,7 +427,7 @@ if __name__ == '__main__':
     async def PubRecaculation(ctx):
         channel = ctx.channel
         pubList = bot.database.get_pubs_list()
-        print(pubList)
+        # print(pubList)
         for userData in pubList:
             try:
                 playerData = bot.database.get_player_info(userData["discord_id"])
