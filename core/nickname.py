@@ -2,9 +2,9 @@
 import core.database
 import re
 async def UpdatePlayerPubs(bot,userID: int,saved_name,total_games,challenge_percentage = 0,OnChange = False):
-
+    if(userID == None): return
     try:
-        member = await bot.guild.fetch_member(userID)
+        member = await bot.guild.fetch_member(int(userID))
     except Exception as E:
         print(E)
         return

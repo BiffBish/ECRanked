@@ -1,4 +1,5 @@
 from asyncio.windows_events import NULL
+from mailbox import _mboxMMDFMessage
 
 from discord.flags import PublicUserFlags
 
@@ -35,7 +36,7 @@ if __name__ == '__main__':
     import re
     initial_extensions = ["button_cogs.results"]
 
-    intents = discord.Intents.default()
+    intents = discord.Intents.all()
     intents.members = True
 
     class Bot(commands.Bot):
@@ -67,7 +68,8 @@ if __name__ == '__main__':
 
         async def on_message(self, message):
             if message.channel.id == 882379875242106940:
-                print(message.content)
+                print("message: ",_mboxMMDFMessage)
+                print("message: ",message.content)
                 await NewPubGame(message.content.split(","))
             if message.content == "j!e6":
                 await message.channel.send("Wrong bot ;). Ping <@301343234108424192> for more info")         
@@ -422,7 +424,7 @@ if __name__ == '__main__':
         for id in ids:
             playerData = bot.database.get_player_info(id)
             if playerData is not None:
-                await UpdatePlayerPubs(bot,id,playerData["discord_name"],playerData["monthly_resetting_stats"]["total_games"],playerData["achievements"]["80"])
+                await UpdatePlayerPubs(bot,playerData["discord_id"],playerData["discord_id"],playerData["monthly_resetting_stats"]["total_games"],playerData["achievements"]["80"])
  
 
     async def PubRecaculation(ctx):

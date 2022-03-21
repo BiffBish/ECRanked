@@ -76,7 +76,9 @@ class Database:
         print(requests.put(f"{ECRANKEDURL}api/v1/user/{oculus_name}",data='{ "discord_id" : null, "discord_name" : null }',headers=headers))
     
     def get_player_info(self, oculus_name: int):
-        request = requests.get(f"{ECRANKEDURL}api/v1/user/{oculus_name}")
+        headers = { "Authorization" :  "Token "+APIKEY,"Content-Type": "application/json"}
+
+        request = requests.get(f"{ECRANKEDURL}api/v1/user/{oculus_name}",headers=headers)
         #await ctx.send(request.status_code)
         #await ctx.send(request.text)
         if request.status_code == 404:
